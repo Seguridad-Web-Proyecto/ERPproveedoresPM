@@ -8,10 +8,9 @@
         <h:outputScript name="bootstrap/js/bootstrap.js" />
         <h:outputScript name="bootstrap/js/bootstrap.min.js"/>
         <h:outputStylesheet name="bootstrap/css/bootstrap.css"/>
-    
     </h:head>
     <h:body>
-        Hello from Facelets
+        <h:commandButton action="#{login.logout}" value="LOGOUT" ></h:commandButton>
         <br />
         <h:link outcome="/Paginas/cargo/List" value="Show All Cargo Items"/>
         <br />
@@ -21,9 +20,9 @@
         <br />
         <h:link outcome="/Paginas/compradetalle/List" value="Show All Compradetalle Items"/>
         <br />
-        <h:link outcome="/Paginas/empleado/List" value="Show All Empleado Items"/>
+        <h:link outcome="/Paginas/empleado/List" value="Show All Empleado Items" />
         <br />
-        <h:link outcome="/Paginas/facturacompra/List" value="Show All Facturacompra Items"/>
+        <h:link outcome="/Paginas/facturacompra/List" value="Show All Facturacompra Items" />
         <br />
         <h:link outcome="/Paginas/facturaventa/List" value="Show All Facturaventa Items"/>
         <br />
@@ -56,8 +55,7 @@
         <h:link outcome="/Paginas/usuariosw/List" value="Show All Usuariosw Items"/>
         <br />
         <h:link outcome="/Paginas/ventadetalle/List" value="Show All Ventadetalle Items"/>
-        <br />
-        <h:link outcome="welcomePrimefaces" value="Primefaces welcome page" />
+     
     </h:body>
 
 
