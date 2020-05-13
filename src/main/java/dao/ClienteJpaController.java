@@ -223,5 +223,9 @@ public class ClienteJpaController implements Serializable {
             em.close();
         }
     }
+
+    public Cliente findClienteByEmail(String email) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

@@ -1,0 +1,230 @@
+create table persona(
+	personaid BIGSERIAL NOT NULL,
+	nombres VARCHAR(45) NOT NULL,
+	apellidos VARCHAR(45) NOT NULL,
+	fecha_nacimiento DATE NOT NULL,
+	telefono VARCHAR(20) NOT NULL,
+	curp VARCHAR(18),
+	rfc VARCHAR(13),
+	sexo CHAR(1) NOT NULL,
+	residencia VARCHAR(100) NOT null,
+	email VARCHAR(50) not null,
+	PRIMARY KEY (personaid)
+);
+
+create table empleado(
+	empleadoid BIGSERIAL PRIMARY KEY NOT NULL,
+	fecha_vinculo DATE NOT NULL,
+	fecha_retiro DATE
+);
+
+create table cargo(
+	cargoid BIGSERIAL PRIMARY KEY NOT NULL ,
+	nombre_cargo VARCHAR(20) NOT NULL,
+	salario_mensual INT NOT NULL
+);
+
+create table historialtrabajo(
+	historialid BIGSERIAL PRIMARY KEY NOT NULL,
+	fecha_inicio DATE NOT NULL,
+	fecha_fin DATE,
+	empleadoid BIGINT NOT NULL,
+	cargoid BIGINT NOT NULL
+);
+
+create table usuario(
+	email VARCHAR(50) PRIMARY KEY NOT NULL,
+	contrasenia VARCHAR NOT NULL,
+	activo BOOLEAN NOT NULL,
+	fecha_creacion DATE NOT null default now()
+);
+
+
+create table rol(
+	email VARCHAR (50) PRIMARY KEY NOT NULL,
+	nombre VARCHAR(20) NOT null
+);
+
+create table usuariosw(
+	usuarioid BIGSERIAL PRIMARY KEY NOT NULL,
+	usuario VARCHAR(45) NOT NULL,
+	contrasenia VARCHAR(45) NOT NULL,
+	activo BOOLEAN NOT NULL,
+	empresa VARCHAR(45) NOT NULL,
+	rfc VARCHAR(13) NOT NULL
+);
+
+
+create table producto(
+	productoid BIGSERIAL PRIMARY KEY NOT NULL,
+	nombre VARCHAR(50) NOT NULL,
+	descripcion VARCHAR(100) NOT NULL,
+	unidad_medida VARCHAR(20) NOT NULL,
+	precio_unitario INT NOT NULL,
+	categoriaid BIGINT NOT NULL
+);
+
+create table categoria(
+	categoriaid BIGSERIAL PRIMARY KEY NOT NULL,
+	nombre VARCHAR(45) NOT NULL
+);
+
+create table ganancia(
+	gananciaid BIGSERIAL PRIMARY KEY NOT NULL,
+	porcentaje NUMERIC(4) NOT NULL,
+	productoid BIGINT NOT NULL
+);
+
+create table ordenventa(
+	ordenventaid BIGSERIAL PRIMARY KEY NOT NULL,
+	fecha_venta DATE NOT NULL,
+	status VARCHAR(45) NOT NULL,
+	iva NUMERIC(2) NOT NULL,
+	subtotal BIGINT NOT NULL,
+	total BIGINT NOT NULL,
+	descripcion VARCHAR(200) NOT NULL,
+	clienteid BIGINT NOT NULL,
+	facturaid BIGINT
+);
+
+create table ventadetalle(
+	ventaid BIGINT,
+	productoid BIGINT NOT NULL,
+	cantidad INT NOT NULL,
+	precio_unitario INT NOT NULL,
+	importe BIGINT NOT NULL,
+	PRIMARY KEY(ventaid, productoid)
+);
+
+create table ordencompra(
+	ordencompraid BIGSERIAL PRIMARY KEY NOT NULL,
+	fecha_compra DATE NOT NULL,
+	status VARCHAR(45) NOT NULL,
+	iva NUMERIC(2) NOT NULL,
+	subtotal BIGINT NOT NULL,
+	total BIGINT NOT NULL,
+	descripcion VARCHAR(200) NOT NULL,
+	proveedorid BIGINT NOT NULL,
+	facturaid BIGINT
+);
+
+create table compradetalle(
+	compraid BIGINT,
+	productoid BIGINT NOT NULL,
+	cantidad INT NOT NULL,
+	precio_unitario INT NOT NULL,
+	importe BIGINT NOT null,
+	primary KEY(compraid, productoid)
+);
+
+create table cliente(
+	clienteid BIGSERIAL PRIMARY KEY NOT NULL,
+	empresa VARCHAR(20) NOT NULL,
+	nombre_contacto VARCHAR(45) NOT NULL,
+	area VARCHAR(45) NOT NULL,
+	telefono VARCHAR(20) NOT NULL,
+	rfc VARCHAR(13) NOT NULL,
+	email VARCHAR(45) NOT NULL,
+    activo BOOLEAN NOT NULL,
+    pagina_web VARCHAR(200) NOT NULL,
+    domicilio_fiscal VARCHAR(100) NOT NULL
+);
+
+create table proveedor(
+	proveedorid BIGSERIAL PRIMARY KEY NOT NULL,
+	empresa VARCHAR(20) NOT NULL,
+	nombre_contacto VARCHAR(45) NOT NULL,
+	area VARCHAR(45) NOT NULL,
+	telefono VARCHAR(20) NOT NULL,
+	rfc VARCHAR(13) NOT NULL,
+	email VARCHAR(45) NOT NULL,
+    activo BOOLEAN NOT NULL,
+    pagina_web VARCHAR(200) NOT NULL,
+    domicilio_fiscal VARCHAR(100) NOT NULL
+);
+
+create table facturaventa(
+	facturaventaid BIGSERIAL PRIMARY KEY NOT NULL,
+	fecha_emision DATE NOT NULL,
+	fecha_vencimiento_pago DATE NOT NULL,
+	descripcion VARCHAR(45) NOT NULL,
+	pagoid BIGINT
+);
+
+create table facturacompra(
+	facturacompraid BIGSERIAL PRIMARY KEY NOT NULL,
+	fecha_emision DATE NOT NULL,
+	fecha_vencimiento_pago DATE NOT NULL,
+	descripcion VARCHAR(45) NOT NULL,
+	pagoid BIGINT
+);
+
+create table pagoventa(
+	pagoventaid BIGSERIAL PRIMARY KEY NOT NULL,
+	fecha_pago DATE NOT NULL,
+	monto BIGINT NOT NULL,
+	estado VARCHAR(45) NOT NULL,
+	tarjetacreditoid BIGINT NOT NULL
+);
+
+create table pagocompra(
+	pagocompraid BIGSERIAL PRIMARY KEY NOT NULL,
+	fecha_pago DATE NOT NULL,
+	monto BIGINT NOT NULL,
+	estado VARCHAR(45) NOT NULL,
+	tarjetacreditoid BIGINT NOT NULL
+);
+
+create table tarjetacreditoventa(
+	tarjetacreditoventaid BIGSERIAL PRIMARY KEY NOT NULL,
+	numero NUMERIC(20) NOT NULL,
+	cvc NUMERIC(4) NOT NULL,
+	nombre_titular VARCHAR(45) NOT NULL,
+	fecha_expiracion VARCHAR(5) NOT NULL,
+	lugar_facturacion VARCHAR(200) NOT NULL
+);
+
+create table tarjetacreditocompra(
+	tarjetacreditocompraid BIGSERIAL PRIMARY KEY NOT NULL,
+	numero NUMERIC(20) NOT NULL,
+	cvc NUMERIC(4) NOT NULL,
+	nombre_titular VARCHAR(45) NOT NULL,
+	fecha_expiracion VARCHAR(5) NOT NULL,
+	lugar_facturacion VARCHAR(200) NOT NULL
+);
+
+
+alter table cargo add constraint cargo_nomcar_uq UNIQUE (nombre_cargo);
+alter table usuario add constraint email_usu_uq UNIQUE (email);
+ALTER TABLE rol ADD CONSTRAINT email_rol_uq UNIQUE (email);
+ALTER TABLE usuariosw ADD CONSTRAINT usuariosw_uq UNIQUE (usuario);
+ALTER TABLE ganancia ADD CONSTRAINT ganaciaproductoid_uq UNIQUE (productoid);
+ALTER TABLE tarjetacreditoventa ADD CONSTRAINT numeroventa_uq UNIQUE (numero);
+ALTER TABLE tarjetacreditocompra ADD CONSTRAINT numerocompra_uq UNIQUE (numero);
+
+
+ALTER TABLE empleado ADD CONSTRAINT empleado_persona_FK FOREIGN KEY(empleadoid) REFERENCES persona(personaid);
+ALTER TABLE persona ADD CONSTRAINT persona_usuario_FK FOREIGN KEY(email) REFERENCES usuario(email);
+ALTER TABLE historialtrabajo ADD CONSTRAINT historial_empleado_FK FOREIGN KEY(empleadoid) REFERENCES empleado(empleadoid);
+ALTER TABLE historialtrabajo ADD CONSTRAINT historial_cargo_FK FOREIGN KEY(cargoid) REFERENCES cargo(cargoid);
+ALTER TABLE producto ADD CONSTRAINT producto_categoria_FK FOREIGN KEY(categoriaid) REFERENCES categoria(categoriaid);
+ALTER TABLE ganancia ADD CONSTRAINT ganancia_producto_FK FOREIGN KEY(productoid) REFERENCES producto(productoid);
+ALTER TABLE rol ADD CONSTRAINT rol_usuario_FK FOREIGN KEY (email) REFERENCES usuario (email);
+
+ALTER TABLE ventadetalle ADD constraint ventadetalle_ordenventa_fk FOREIGN KEY(ventaid) REFERENCES ordenventa(ordenventaid);
+ALTER TABLE ventadetalle ADD constraint ventadetalle_producto_fk FOREIGN KEY(productoid) REFERENCES producto(productoid);
+
+ALTER TABLE ordenventa ADD CONSTRAINT ordenventa_cliente_FK FOREIGN KEY(clienteid) REFERENCES cliente(clienteid);
+ALTER TABLE ordenventa ADD CONSTRAINT ordenventa_factura_FK FOREIGN KEY(facturaid) REFERENCES facturaventa(facturaventaid);
+
+ALTER TABLE facturaventa ADD CONSTRAINT factura_pagoventa_FK FOREIGN KEY(pagoid) REFERENCES pagoventa(pagoventaid);
+ALTER TABLE pagoventa ADD CONSTRAINT pagoventa_tarjeta_FK FOREIGN KEY(tarjetacreditoid) REFERENCES tarjetacreditoventa(tarjetacreditoventaid);
+
+ALTER TABLE compradetalle ADD constraint compradetalle_ordencompra_fk FOREIGN KEY(compraid) REFERENCES ordencompra(ordencompraid);
+ALTER TABLE compradetalle ADD constraint compradetalle_producto_fk FOREIGN KEY(productoid) REFERENCES producto(productoid);
+
+ALTER TABLE ordencompra ADD CONSTRAINT ordencompra_factura_FK FOREIGN KEY(facturaid) REFERENCES facturacompra(facturacompraid);
+ALTER TABLE ordencompra ADD CONSTRAINT ordencompra_proveedor_FK FOREIGN KEY(proveedorid) REFERENCES proveedor(proveedorid);
+
+ALTER TABLE facturacompra ADD CONSTRAINT factura_pagocompra_FK FOREIGN KEY(pagoid) REFERENCES pagocompra(pagocompraid);
+ALTER TABLE pagocompra ADD CONSTRAINT pagocompra_tarjeta_FK FOREIGN KEY(tarjetacreditoid) REFERENCES tarjetacreditocompra(tarjetacreditocompraid);

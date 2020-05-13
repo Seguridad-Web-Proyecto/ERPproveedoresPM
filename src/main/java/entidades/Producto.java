@@ -44,11 +44,13 @@ import javax.xml.bind.annotation.XmlTransient;
 public class Producto implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "productoid")
     private Long productoid;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
@@ -77,8 +79,6 @@ public class Producto implements Serializable {
     private Ganancia ganancia;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "producto")
     private Collection<Ventadetalle> ventadetalleCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "productoid")
-    private Collection<Inventario> inventarioCollection;
 
     public Producto() {
     }
@@ -171,16 +171,6 @@ public class Producto implements Serializable {
 
     public void setVentadetalleCollection(Collection<Ventadetalle> ventadetalleCollection) {
         this.ventadetalleCollection = ventadetalleCollection;
-    }
-
-    @XmlTransient
-    @JsonbTransient
-    public Collection<Inventario> getInventarioCollection() {
-        return inventarioCollection;
-    }
-
-    public void setInventarioCollection(Collection<Inventario> inventarioCollection) {
-        this.inventarioCollection = inventarioCollection;
     }
 
     @Override

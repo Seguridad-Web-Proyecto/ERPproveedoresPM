@@ -25,7 +25,7 @@ import javax.ws.rs.core.MediaType;
 @Path("categorias")
 public class CategoriaFacadeREST extends AbstractFacade<Categoria> {
 
-    @PersistenceContext(unitName = "com.mycompany_ERPsubprovee_war_1.0-SNAPSHOTPU")
+    @PersistenceContext(unitName = "com.mycompany_ERProveedores_war_1.0-SNAPSHOTPU")
     private EntityManager em;
 
     public CategoriaFacadeREST() {

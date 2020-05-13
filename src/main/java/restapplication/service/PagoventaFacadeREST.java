@@ -31,7 +31,7 @@ import restapplication.Common;
 @Path("pagos")
 public class PagoventaFacadeREST extends AbstractFacade<Pagoventa> {
 
-    @PersistenceContext(unitName = "com.mycompany_ERPsubprovee_war_1.0-SNAPSHOTPU")
+    @PersistenceContext(unitName = "com.mycompany_ERProveedores_war_1.0-SNAPSHOTPU")
     private EntityManager em;
 
     public PagoventaFacadeREST() {

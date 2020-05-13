@@ -23,7 +23,7 @@ public abstract class AbstractFacade<T> {
     private UserTransaction utx;
     
     private final EntityManagerFactory entityManagerFactory = 
-            Persistence.createEntityManagerFactory("com.mycompany_ERPsubprovee_war_1.0-SNAPSHOTPU");
+            Persistence.createEntityManagerFactory("com.mycompany_ERProveedores_war_1.0-SNAPSHOTPU");
 
     public AbstractFacade(Class<T> entityClass) {
         this.entityClass = entityClass;

@@ -35,7 +35,7 @@ import restapplication.Common;
 @Path("pedidos")
 public class OrdenventaFacadeREST extends AbstractFacade<Ordenventa> {
 
-    @PersistenceContext(unitName = "com.mycompany_ERPsubprovee_war_1.0-SNAPSHOTPU")
+    @PersistenceContext(unitName = "com.mycompany_ERProveedores_war_1.0-SNAPSHOTPU")
     private EntityManager em;
     
     private ClienteJpaController clienteJpaController = 
