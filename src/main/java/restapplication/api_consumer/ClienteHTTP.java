@@ -14,7 +14,9 @@ import entidades.Categoria;
 import entidades.Producto;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,7 @@ public class ClienteHTTP {
     }*/
     private static final String pathProductos = "http://localhost:8080/ERPsubproveedoresPM/webresources/productos";
     private static final String pathCategorias = "http://localhost:8080/ERPsubproveedoresPM/webresources/categorias";
+    private static final String USER_AGENT = "Mozilla/5.0";
     
     public static List<Producto> productosProveedor(String path){
         List<Producto> productoList = new ArrayList<>();
@@ -176,6 +179,35 @@ public class ClienteHTTP {
         // Regresar resultado, pero como cadena, no como StringBuilder
         
         return resultado.toString();
+    }
+    
+    public static String httpPOST(String url, String jsonInputString) throws Exception{
+        URL obj = new URL(url);
+        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+        //Set the Request Method
+        con.setRequestMethod("POST");
+        //Set the Request Content-Type Header Parameter
+        con.setRequestProperty("Content-Type", "application/json; utf-8");
+        //Set Response Format Type
+        con.setRequestProperty("Accept", "application/json");
+        //Ensure the Connection Will Be Used to Send Content
+        con.setDoOutput(true);
+        // Create the Request Body
+        try(OutputStream os = con.getOutputStream()) {
+            byte[] input = jsonInputString.getBytes("utf-8");
+            os.write(input, 0, input.length);           
+        }
+        // Read the Response from Input Stream
+        StringBuilder response = new StringBuilder();
+        try(BufferedReader br = new BufferedReader(
+            new InputStreamReader(con.getInputStream(), "utf-8"))) {
+            String responseLine = null;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine.trim());
+            }
+            System.out.println(response.toString());
+          }
+        return response.toString();
     }
     
 }
