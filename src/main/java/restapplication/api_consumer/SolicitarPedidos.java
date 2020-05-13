@@ -23,8 +23,8 @@ import java.util.logging.Logger;
 public class SolicitarPedidos {
     
     private static final String pathPedidos = "http://localhost:8080/ERPsubproveedoresPM/webresources/pedidos";
-    
-    public static void main(String args[]){
+
+    public static void main(String[] args) {
         Ordenventa ordenventa = new Ordenventa();
         Cliente cliente = new Cliente();
         cliente.setArea("Inventarios");
@@ -37,9 +37,9 @@ public class SolicitarPedidos {
         ordenventa.setClienteid(cliente);
         ordenventa.setDescripcion("Esta orden de venta presenta los productos que se están vendiendo a walmart méxico");
         Ordenventa pedidoIngresado = generarPedido(ordenventa);
-        
+
         List<Ventadetalle> detalles = new ArrayList<>();
-        agregarDetallesAlPedido(ordenventa, detalles);
+        //agregarDetallesAlPedido(ordenventa, detalles);
     }
     
     public static Ordenventa generarPedido(Ordenventa ordenventa){

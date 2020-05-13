@@ -28,10 +28,7 @@ import org.primefaces.json.JSONObject;
  * @author David Villeda
  */
 public class ClienteHTTP {
-    
-    /*public static void main(String[] args) {
-        List<Producto> productos = productosProveedor();
-    }*/
+
     private static final String pathProductos = "http://localhost:8080/ERPsubproveedoresPM/webresources/productos";
     private static final String pathCategorias = "http://localhost:8080/ERPsubproveedoresPM/webresources/categorias";
     private static final String USER_AGENT = "Mozilla/5.0";
@@ -206,7 +203,7 @@ public class ClienteHTTP {
                 response.append(responseLine.trim());
             }
             System.out.println(response.toString());
-          }
+        }
         return response.toString();
     }
     
