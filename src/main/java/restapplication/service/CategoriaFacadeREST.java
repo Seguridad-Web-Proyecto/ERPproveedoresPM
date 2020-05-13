@@ -16,6 +16,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import restapplication.api_consumer.ClienteHTTP;
 
 /**
  *
@@ -36,28 +37,33 @@ public class CategoriaFacadeREST extends AbstractFacade<Categoria> {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Categoria find(@PathParam("id") Long id) {
-        return super.find(id);
+        //return super.find(id);
+        Categoria categoria = ClienteHTTP.obtenerCategoriaXId(id);
+        return categoria;
     }
 
     @GET
     @Override
     @Produces(MediaType.APPLICATION_JSON)
     public List<Categoria> findAll() {
-        return super.findAll();
+        //return super.findAll();
+        List<Categoria> categorias = ClienteHTTP.categoriasProveedor("");
+        return categorias;
     }
 
     @GET
     @Path("{from}/{to}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Categoria> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
-        return super.findRange(new int[]{from, to});
+        List<Categoria> categorias = ClienteHTTP.categoriasProveedor("/"+from.toString()+"/"+to.toString());
+        return categorias;
     }
 
     @GET
     @Path("count")
     @Produces(MediaType.TEXT_PLAIN)
     public String countREST() {
-        return String.valueOf(super.count());
+        return ClienteHTTP.categoriasCOUNT();
     }
 
     @Override

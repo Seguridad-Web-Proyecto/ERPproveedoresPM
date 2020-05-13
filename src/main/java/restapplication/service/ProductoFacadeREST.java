@@ -18,6 +18,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import restapplication.Common;
+import restapplication.api_consumer.ClienteHTTP;
 
 /**
  *
@@ -38,8 +39,9 @@ public class ProductoFacadeREST extends AbstractFacade<Producto> {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Producto find(@PathParam("id") Long id) {
-        Producto producto = super.find(id);
-        Producto p = Common.aplicarGananciaAlProducto(producto);
+        /*Producto producto = super.find(id);
+        Producto p = Common.aplicarGananciaAlProducto(producto);*/
+        Producto p = ClienteHTTP.obtenerProductoXId(id);
         return p;
     }
     
@@ -47,12 +49,13 @@ public class ProductoFacadeREST extends AbstractFacade<Producto> {
     @Override
     @Produces(MediaType.APPLICATION_JSON)
     public List<Producto> findAll() {
-        List<Producto> productos = super.findAll();
+        /*List<Producto> productos = super.findAll();
         List<Producto> returnList = new ArrayList<>();
         for(Producto p: productos){
             p = Common.aplicarGananciaAlProducto(p);
             returnList.add(p);
-        }
+        }*/
+        List<Producto> returnList = ClienteHTTP.productosProveedor("");
         return returnList;
     }
 
@@ -60,13 +63,7 @@ public class ProductoFacadeREST extends AbstractFacade<Producto> {
     @Path("{from}/{to}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Producto> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
-        List<Producto> productos = super.findRange(new int[]{from, to});
-        List<Producto> returnList = new ArrayList<>();
-        for(Producto p: productos){
-            p = Common.aplicarGananciaAlProducto(p);
-            //System.out.println(p);
-            returnList.add(p);
-        }
+        List<Producto> returnList = ClienteHTTP.productosProveedor("/"+from.toString()+"/"+to.toString());
         return returnList;
     }
 
@@ -74,7 +71,7 @@ public class ProductoFacadeREST extends AbstractFacade<Producto> {
     @Path("count")
     @Produces(MediaType.TEXT_PLAIN)
     public String countREST() {
-        return String.valueOf(super.count());
+        return ClienteHTTP.productosCOUNT();
     }
 
     @Override
