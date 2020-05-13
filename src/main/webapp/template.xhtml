@@ -19,8 +19,6 @@
             <p:layoutUnit position="north" size="65" header="SISTEMA DE ERP PROVEEDORES">
                 <h:form id="menuForm">
                     <p:menubar>
-                        <p:menuitem action="#{login.logout()}" value="LOGOUT"/>
-                        <p:menuitem value="Inicio" outcome="/index" icon="ui-icon-home"/>
                         <p:submenu label="Modulos">
                             <p:menuitem value="Cargo" outcome="/Paginas/cargo/List.xhtml" rendered="#{login.rolRh}"/>
                             <p:menuitem value="Categoria" outcome="/Paginas/categoria/List.xhtml" rendered="#{login.rolInventario}"/>
@@ -29,7 +27,6 @@
                             <p:menuitem value="Empleado" outcome="/Paginas/empleado/List.xhtml" rendered="#{login.rolRh}"/>
                             <p:menuitem value="Facturacompra" outcome="/Paginas/facturacompra/List.xhtml" rendered="#{login.rolCompras}"/>
                             <p:menuitem value="Facturaventa" outcome="/Paginas/facturaventa/List.xhtml" rendered="#{login.rolVentas}"/>
-                            <p:menuitem value="Ganancia" outcome="/Paginas/ganancia/List.xhtml" rendered="#{login.rolAdmin}"/>
                             <p:menuitem value="Historialtrabajo" outcome="/Paginas/historialtrabajo/List.xhtml" rendered="#{login.rolRh}"/>
                             <p:menuitem value="Ordencompra" outcome="/Paginas/ordencompra/List.xhtml" rendered="#{login.rolCompras}"/>
                             <p:menuitem value="Ordenventa" outcome="/Paginas/ordenventa/List.xhtml" rendered="#{login.rolVentas}"/>
@@ -42,9 +39,9 @@
                             <p:menuitem value="Tarjetacreditocompra" outcome="/Paginas/tarjetacreditocompra/List.xhtml" rendered="#{login.rolCompras}"/>
                             <p:menuitem value="Tarjetacreditoventa" outcome="/Paginas/tarjetacreditoventa/List.xhtml" rendered="#{login.rolVentas}"/>
                             <p:menuitem value="Usuario" outcome="/Paginas/usuario/List.xhtml" rendered="#{login.rolRh}"/>
-                            <p:menuitem value="Usuariosw" outcome="/Paginas/usuariosw/List.xhtml" rendered="#{login.rolAdmin}"/>
                             <p:menuitem value="Ventadetalle" outcome="/Paginas/ventadetalle/List.xhtml" rendered="#{login.rolVentas}"/>
                         </p:submenu>
+                        <p:menuitem action="#{login.logout()}" value="Cerrar Sesión"/>
                     </p:menubar>
                 </h:form>
             </p:layoutUnit>
