@@ -76,13 +76,20 @@ public class login implements Serializable
 //    setPersons(new UsersJpaController(utx,emf).findUsers(usuario));
 //    context.getExternalContext().getSessionMap().put("persons", persons);
 
-//        if (request.isUserInRole("ADMINS"))
-//        {
+       if (request.isUserInRole("ADMINS"))
+        {
 //            return "/secured/admin/menu.xhtml";
-//        } else
+//        } else if (request.isUserInRole("COMPRAS"))
 //        {
+//            return "/secured/compras/menu.xhtml";
+//        
+//        } else if (request.isUserInRole("USERS"))
+//        {
+            return "/secured/admin/menu.xhtml";
+        }else
+        {
             return "/secured/user/menu.xhtml";
-//        }
+        }
     }
     
     public boolean isRolCompras()
@@ -92,7 +99,46 @@ public class login implements Serializable
         
         return request.isUserInRole("COMPRAS");
     }
-
+    
+    public boolean isRoUsers()
+    {
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
+        
+        return request.isUserInRole("USERS");
+    }
+    
+    public boolean isRolAdmin()
+    {
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
+        
+        return request.isUserInRole("ADMINS");
+    }
+    
+    public boolean isRolVentas()
+    {
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
+        
+        return request.isUserInRole("VENTAS");
+    }
+    
+    public boolean isRolRh()
+    {
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
+        
+        return request.isUserInRole("RH");
+    }
+    
+    public boolean isRolInventario()
+    {
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
+        
+        return request.isUserInRole("INVENTARIO");
+    }
     public String logout()
     {
         FacesContext context = FacesContext.getCurrentInstance();
