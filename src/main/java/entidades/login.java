@@ -54,8 +54,6 @@ public class login implements Serializable
         this.contrasenia = contrasenia;
     }
 
-    
-
     public String login3()
     {
         FacesContext context = FacesContext.getCurrentInstance();
@@ -76,7 +74,7 @@ public class login implements Serializable
 //    setPersons(new UsersJpaController(utx,emf).findUsers(usuario));
 //    context.getExternalContext().getSessionMap().put("persons", persons);
 
-       if (request.isUserInRole("ADMINS"))
+        if (request.isUserInRole("ADMINS"))
         {
 //            return "/secured/admin/menu.xhtml";
 //        } else if (request.isUserInRole("COMPRAS"))
@@ -86,59 +84,92 @@ public class login implements Serializable
 //        } else if (request.isUserInRole("USERS"))
 //        {
             return "/secured/admin/menu.xhtml";
-        }else
+        } else
         {
             return "/secured/user/menu.xhtml";
         }
     }
-    
+
     public boolean isRolCompras()
     {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-        
-        return request.isUserInRole("COMPRAS");
+        if (request.isUserInRole("COMPRAS") || request.isUserInRole("ADMINS"))
+        {
+            return true;
+        } else
+        {
+            return false;
+        }
+
     }
-    
+
     public boolean isRoUsers()
     {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-        
-        return request.isUserInRole("USERS");
+        if (request.isUserInRole("USERS") || request.isUserInRole("ADMINS"))
+        {
+            return true;
+        } else
+        {
+            return false;
+        }
+
     }
-    
+
     public boolean isRolAdmin()
     {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-        
+
         return request.isUserInRole("ADMINS");
     }
-    
+
     public boolean isRolVentas()
     {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-        
-        return request.isUserInRole("VENTAS");
+        if (request.isUserInRole("VENTAS") || request.isUserInRole("ADMINS"))
+        {
+            return true;
+        } else
+        {
+            return false;
+        }
+
     }
-    
+
     public boolean isRolRh()
     {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-        
-        return request.isUserInRole("RH");
+
+        if (request.isUserInRole("RH") || request.isUserInRole("ADMINS"))
+        {
+            return true;
+        } else
+        {
+            return false;
+        }
+
     }
-    
+
     public boolean isRolInventario()
     {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-        
-        return request.isUserInRole("INVENTARIO");
+
+        if (request.isUserInRole("INVENTARIO") || request.isUserInRole("ADMINS"))
+        {
+            return true;
+        } else
+        {
+            return false;
+        }
+
     }
+
     public String logout()
     {
         FacesContext context = FacesContext.getCurrentInstance();

@@ -5,19 +5,7 @@
  */
 package entidades;
 
-import static com.sun.org.apache.bcel.internal.classfile.Utility.toHexString;
-import java.io.UnsupportedEncodingException;
-import static java.lang.Integer.toHexString;
-import static java.lang.Long.toHexString;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.enterprise.context.RequestScoped;
-import javax.swing.text.Utilities;
-import jsf.clases.UsuarioController;
-import static org.eclipse.persistence.internal.oxm.XPathFragment.CHARSET;
-import static sun.security.pkcs11.wrapper.Functions.toHexString;
 
 /**
  *
