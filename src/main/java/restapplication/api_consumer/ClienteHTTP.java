@@ -43,16 +43,16 @@ public class ClienteHTTP {
             String jsonString = new String(respuesta.getBytes("ISO-8859-1"), "UTF-8");
             ObjectMapper mapper = new ObjectMapper();
             productoList = mapper.readValue(jsonString, new TypeReference<List<Producto>>(){});
+            System.out.println("-------------------");
             for(Producto p: productoList){
-                System.out.println("-------------------");
                 System.out.println("productoid: "+p.getProductoid());
                 System.out.println("nombre: "+p.getNombre());
                 System.out.println("descripcion: "+p.getDescripcion());
                 System.out.println("unidad de medida: "+p.getUnidadMedida());
                 System.out.println("categoría[ ");
                 System.out.println("categoriaid: "+p.getCategoriaid());
-                System.out.println("categoría nombre: "+p.getCategoriaid().getNombre());
-                System.out.println("]\n-------------------");
+                System.out.println("categoría nombre: "+p.getCategoriaid().getNombre()+"]");
+                System.out.println("-------------------");
             }
         } catch (Exception e) {
             // Manejar excepción
@@ -78,8 +78,8 @@ public class ClienteHTTP {
             System.out.println("unidad de medida: "+producto.getUnidadMedida());
             System.out.println("categoría[ ");
             System.out.println("categoriaid: "+producto.getCategoriaid());
-            System.out.println("categoría nombre: "+producto.getCategoriaid().getNombre());
-            System.out.println("]\n-------------------");
+            System.out.println("categoría nombre: "+producto.getCategoriaid().getNombre()+"]");
+            System.out.println("-------------------");
         } catch (Exception e) {
             // Manejar excepción
             e.printStackTrace();
@@ -101,8 +101,8 @@ public class ClienteHTTP {
                 System.out.println("-------------------");
                 System.out.println("categoría[ ");
                 System.out.println("categoriaid: "+categoria.getCategoriaid());
-                System.out.println("categoría nombre: "+categoria.getNombre());
-                System.out.println("]\n-------------------");
+                System.out.println("categoría nombre: "+categoria.getNombre()+"]");
+                System.out.println("-------------------");
             }
         } catch (Exception e) {
             // Manejar excepción
@@ -123,8 +123,8 @@ public class ClienteHTTP {
             System.out.println("-------------------");
             System.out.println("categoria[ ");
             System.out.println("categoriaid: "+categoria.getCategoriaid());
-            System.out.println("categoría nombre: "+categoria.getNombre());
-            System.out.println("]\n-------------------");
+            System.out.println("categoría nombre: "+categoria.getNombre()+"]");
+            System.out.println("-------------------");
         } catch (Exception e) {
             // Manejar excepción
             e.printStackTrace();
@@ -157,6 +157,7 @@ public class ClienteHTTP {
     }
 
     public static String peticionHttpGet(String urlParaVisitar) throws Exception {
+        System.out.println("Proveedor realizando petición GET a la url "+urlParaVisitar);
         // Esto es lo que vamos a devolver
         StringBuilder resultado = new StringBuilder();
         // Crear un objeto de tipo URL
@@ -174,7 +175,7 @@ public class ClienteHTTP {
         // Cerrar el BufferedReader
         rd.close();
         // Regresar resultado, pero como cadena, no como StringBuilder
-        
+        System.out.println("Proveedor recibiendo información...");
         return resultado.toString();
     }
     

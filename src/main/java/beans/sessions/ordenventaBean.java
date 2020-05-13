@@ -25,7 +25,7 @@ import org.primefaces.model.chart.ChartSeries;
 @ViewScoped
 public class ordenventaBean implements Serializable{
 
-@EJB
+    @EJB
     private OrdenventaFacade ordenvenFacade;
     private List<Ordenventa> listado;
     private BarChartModel barra;
