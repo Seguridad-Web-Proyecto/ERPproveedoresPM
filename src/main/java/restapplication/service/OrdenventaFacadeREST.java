@@ -7,7 +7,11 @@ package restapplication.service;
 
 import dao.ClienteJpaController;
 import entidades.Cliente;
+import entidades.Ganancia;
 import entidades.Ordenventa;
+import entidades.Producto;
+import entidades.Ventadetalle;
+import entidades.VentadetallePK;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,6 +30,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import restapplication.Common;
+import restapplication.api_consumer.APIConsumer;
 
 /**
  *
@@ -38,8 +43,18 @@ public class OrdenventaFacadeREST extends AbstractFacade<Ordenventa> {
     @PersistenceContext(unitName = "com.mycompany_ERProveedores_war_1.0-SNAPSHOTPU")
     private EntityManager em;
     
-    private ClienteJpaController clienteJpaController = 
+    private final ClienteJpaController clienteJpaController = 
             new ClienteJpaController(super.getUserTransaction(), super.getEntityManagerFactory());
+    
+    
+    @EJB
+    private beans.sessions.ProductoFacade productoFacade;
+    
+    @EJB
+    private beans.sessions.VentadetalleFacade ventaDetalleFacade;
+    
+    @EJB
+    private beans.sessions.GananciaFacade gananciaFacade;
 
     public OrdenventaFacadeREST() {
         super(Ordenventa.class);
@@ -47,7 +62,6 @@ public class OrdenventaFacadeREST extends AbstractFacade<Ordenventa> {
 
     @POST
     @Override
-    //@Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(Ordenventa entity) {
@@ -70,17 +84,102 @@ public class OrdenventaFacadeREST extends AbstractFacade<Ordenventa> {
     }
     
     @PUT
+    @Path("/solicitar")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response realizarPedido(Ordenventa entity){
         Ordenventa ordenventa = super.find(entity.getOrdenventaid());
         if(ordenventa==null){
             return Response.status(Status.BAD_REQUEST).build();
         }else{
-            ordenventa.setStatus("Pedido realizado");
+            ordenventa.setStatus("Pedido realizado!");
+            // solicitar pedidos subproveedores
+            Ordenventa nuevaOrden = new Ordenventa();
+            Cliente cliente = new Cliente();
+            cliente.setEmail("compras@walmart.com.mx");
+            nuevaOrden.setClienteid(cliente);
+            nuevaOrden.setDescripcion("Realizando pedido para el proveedor");
+            /*Response responsePedido = APIConsumer.realizarPedido(nuevaOrden);
+            Ordenventa ventaResponse = responsePedido.readEntity(Ordenventa.class);
+            
+            ArrayList<Ventadetalle> ventadetalleList = new ArrayList<>();
+            for(Ventadetalle vd: ordenventa.getVentadetalleCollection()){
+                Ventadetalle ventadetalle = new Ventadetalle();
+                ventadetalle.setCantidad(vd.getCantidad());
+                ventadetalle.setOrdenventa(ventaResponse);
+                ventadetalle.setProducto(vd.getProducto());
+            }
+            ventaResponse.setVentadetalleCollection(ventadetalleList);
+            
+            Response responseDetalles = APIConsumer.agregarDetallesAlPedido(ventaResponse);
+            Response concluirPedido = APIConsumer.concluirPedido(ventaResponse);*/
             return Response.ok().build();
         }
     }
-
+    
+    @PUT
+    @Path("/detalles")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response agregarDetalles(Ordenventa venta){
+        try{
+            //ORDEN VENTA
+            // se hace una copia de la orden venta porque de alguna manera el ORM, está cambiando
+            // las órdenes de ventas que están asociadas con los productos
+            Ordenventa ordenventaQuery = super.find(venta.getOrdenventaid());
+             if(ordenventaQuery==null){
+                return Response.status(Status.NOT_FOUND).build();
+            }
+            Ordenventa ordenventa = new Ordenventa(ordenventaQuery.getOrdenventaid(), ordenventaQuery.getFechaVenta(),
+                    ordenventaQuery.getStatus(), ordenventaQuery.getIva(), ordenventaQuery.getSubtotal(), 
+                    ordenventaQuery.getTotal(), ordenventaQuery.getStatus());
+            ordenventa.setClienteid(ordenventaQuery.getClienteid());
+                       
+            if(venta.getVentadetalleCollection()==null) return Response.status(Status.BAD_REQUEST).build();
+            
+            ArrayList<Ventadetalle> detalles = new ArrayList<>();
+            detalles.addAll(ordenventaQuery.getVentadetalleCollection());
+            for(Ventadetalle entity: venta.getVentadetalleCollection()){
+                if(entity.getProducto()==null || 
+                        entity.getProducto().getProductoid()==null){
+                    return Response.status(Status.BAD_REQUEST).build();
+                }
+                //PRODUCTO
+                Producto productoAPI = APIConsumer.obtenerProductoXId(entity.getProducto().getProductoid());
+                if(productoAPI==null){
+                    return Response.status(Status.NOT_FOUND).build();
+                }
+                Producto productoIngresado = productoFacade.createEntity(productoAPI);
+                Ganancia ganancia = new Ganancia();
+                ganancia.setPorcentaje((short)20);
+                ganancia.setProductoid(productoIngresado);
+                Ganancia gananciaIngresada = gananciaFacade.createEntity(ganancia);
+                productoIngresado.setGanancia(gananciaIngresada);
+                Producto p = Common.aplicarGananciaAlProducto(productoIngresado);
+                //VENTA DETALLE
+                entity.setPrecioUnitario(p.getPrecioUnitario());
+                entity.setImporte(p.getPrecioUnitario()*entity.getCantidad());
+                // MODIFICAR SUBTOTAL Y TOTAL DE ORDEN DE VENTA
+                ordenventa.setSubtotal(ordenventa.getSubtotal()+entity.getImporte());
+                long importeIva = (long)16*entity.getImporte()/(long)100;
+                importeIva += entity.getImporte();
+                ordenventa.setTotal(ordenventa.getTotal()+importeIva);
+                // VENTA DETALLE
+                entity.setProducto(p);
+                entity.setOrdenventa(ordenventa);
+                entity.setVentadetallePK(new VentadetallePK(ordenventa.getOrdenventaid(), p.getProductoid()));
+                ventaDetalleFacade.create(entity);
+                detalles.add(entity);
+            }
+            ordenventa.setVentadetalleCollection(detalles);
+            super.edit(ordenventa);
+            return Response.ok().build();
+        }catch(Exception ex){
+            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    
     @GET
     @Path("{id}")
     //@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})

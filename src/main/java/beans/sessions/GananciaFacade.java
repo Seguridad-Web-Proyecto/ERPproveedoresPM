@@ -29,4 +29,10 @@ public class GananciaFacade extends AbstractFacade<Ganancia> {
         super(Ganancia.class);
     }
     
+    public Ganancia createEntity(Ganancia ganancia){
+        getEntityManager().persist(ganancia);
+        getEntityManager().flush();
+        return ganancia;
+    }
+    
 }

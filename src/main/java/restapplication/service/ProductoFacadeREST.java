@@ -18,6 +18,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import restapplication.Common;
+import restapplication.api_consumer.APIConsumer;
 import restapplication.api_consumer.ClienteHTTP;
 
 /**
@@ -41,7 +42,7 @@ public class ProductoFacadeREST extends AbstractFacade<Producto> {
     public Producto find(@PathParam("id") Long id) {
         /*Producto producto = super.find(id);
         Producto p = Common.aplicarGananciaAlProducto(producto);*/
-        Producto p = ClienteHTTP.obtenerProductoXId(id);
+        Producto p = APIConsumer.obtenerProductoXId(id);
         return p;
     }
     
@@ -55,7 +56,7 @@ public class ProductoFacadeREST extends AbstractFacade<Producto> {
             p = Common.aplicarGananciaAlProducto(p);
             returnList.add(p);
         }*/
-        List<Producto> returnList = ClienteHTTP.productosProveedor("");
+        List<Producto> returnList = APIConsumer.productos("");
         return returnList;
     }
 
@@ -63,7 +64,7 @@ public class ProductoFacadeREST extends AbstractFacade<Producto> {
     @Path("{from}/{to}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Producto> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
-        List<Producto> returnList = ClienteHTTP.productosProveedor("/"+from.toString()+"/"+to.toString());
+        List<Producto> returnList = APIConsumer.productos("/"+from.toString()+"/"+to.toString());
         return returnList;
     }
 
@@ -71,7 +72,7 @@ public class ProductoFacadeREST extends AbstractFacade<Producto> {
     @Path("count")
     @Produces(MediaType.TEXT_PLAIN)
     public String countREST() {
-        return ClienteHTTP.productosCOUNT();
+        return APIConsumer.productosCOUNT();
     }
 
     @Override

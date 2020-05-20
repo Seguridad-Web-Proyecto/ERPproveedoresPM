@@ -29,4 +29,10 @@ public class ProductoFacade extends AbstractFacade<Producto> {
         super(Producto.class);
     }
     
+    public Producto createEntity(Producto producto){
+        getEntityManager().persist(producto);
+        getEntityManager().flush();
+        return producto;
+    }
+    
 }
