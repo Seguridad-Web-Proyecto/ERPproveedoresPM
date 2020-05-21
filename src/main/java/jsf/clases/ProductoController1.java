@@ -20,19 +20,20 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import restapplication.api_consumer.APIConsumer;
+import restapplication.service.ProductoFacadeREST;
 
-@Named("productoController")
+@Named("productoController1")
 @SessionScoped
-public class ProductoController implements Serializable
+public class ProductoController1 implements Serializable
 {
 
     @EJB
-    private beans.sessions.ProductoFacade ejbFacade;
+    private ProductoFacadeREST ejbFacade;
     private List<Producto> items = null;
     private Producto selected;
     private List<Producto> selectedWs;
 
-    public ProductoController()
+    public ProductoController1()
     {
     }
 
@@ -64,7 +65,7 @@ public class ProductoController implements Serializable
     {
     }
 
-    private ProductoFacade getFacade()
+    private ProductoFacadeREST getFacade()
     {
         return ejbFacade;
     }
@@ -186,7 +187,7 @@ public class ProductoController implements Serializable
             {
                 return null;
             }
-            ProductoController controller = (ProductoController) facesContext.getApplication().getELResolver().
+            ProductoController1 controller = (ProductoController1) facesContext.getApplication().getELResolver().
                     getValue(facesContext.getELContext(), null, "productoController");
             return controller.getProducto(getKey(value));
         }

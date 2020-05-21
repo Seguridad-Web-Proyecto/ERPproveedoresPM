@@ -5,6 +5,7 @@
  */
 package restapplication.api_consumer;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import entidades.Categoria;
@@ -34,6 +35,10 @@ public class APIConsumer {
     private static final String pathCategorias = "http://localhost:8080/ERPsubproveedoresPM/webresources/categorias";
     
     private static final String USER_AGENT = "Mozilla/5.0";
+     private static final String URL_BASE = "http://localhost:8080/ERPsubproveedoresPM/webresources";
+    private static WebTarget webTarget;
+    private static Client clientHttp;
+    private static Invocation.Builder invocationBuilder;
     
     public static List<Producto> productos(String path){
         List<Producto> productoList = new ArrayList<>();
@@ -61,6 +66,18 @@ public class APIConsumer {
             e.printStackTrace();
         }
         return productoList;
+    }
+    
+    public static List<Producto> getProductos() throws JsonProcessingException{
+        System.out.println("Solicitando productos...");
+        clientHttp = ClientBuilder.newClient();
+        webTarget = clientHttp.target("http://localhost:8080/ERPsubproveedoresPM/webresources").path("/productos");
+        invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
+        Response response = invocationBuilder.get();
+        System.out.println("Respuesta: "+response.getStatus());
+        List<Producto> productos = new ObjectMapper().
+                readValue(response.readEntity(String.class), new TypeReference<List<Producto>>(){});
+        return productos;
     }
     
     public static Producto obtenerProductoXId(Long productoid){
@@ -158,10 +175,7 @@ public class APIConsumer {
         return respuesta;
     }
     
-    private static final String URL_BASE = "http://localhost:8080/ERPsubproveedoresPM/webresources";
-    private static WebTarget webTarget;
-    private static Client clientHttp;
-    private static Invocation.Builder invocationBuilder;
+   
     
     public static Response realizarPedido(Ordenventa ordenventa){
         System.out.println("Proveedores -> Realizando pedido a subproveedores...");
