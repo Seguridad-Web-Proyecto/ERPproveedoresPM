@@ -50,17 +50,17 @@ public class APIConsumer {
             String jsonString = new String(respuesta.getBytes("ISO-8859-1"), "UTF-8");
             ObjectMapper mapper = new ObjectMapper();
             productoList = mapper.readValue(jsonString, new TypeReference<List<Producto>>(){});
-            for(Producto p: productoList){
-                System.out.println("-------------------");
-                System.out.println("productoid: "+p.getProductoid());
-                System.out.println("nombre: "+p.getNombre());
-                System.out.println("descripcion: "+p.getDescripcion());
-                System.out.println("unidad de medida: "+p.getUnidadMedida());
-                System.out.println("categoría[ ");
-                System.out.println("categoriaid: "+p.getCategoriaid());
-                System.out.println("categoría nombre: "+p.getCategoriaid().getNombre());
-                System.out.println("]\n-------------------");
-            }
+//            for(Producto p: productoList){
+//                System.out.println("-------------------");
+//                System.out.println("productoid: "+p.getProductoid());
+//                System.out.println("nombre: "+p.getNombre());
+//                System.out.println("descripcion: "+p.getDescripcion());
+//                System.out.println("unidad de medida: "+p.getUnidadMedida());
+//                System.out.println("categoría[ ");
+//                System.out.println("categoriaid: "+p.getCategoriaid());
+//                System.out.println("categoría nombre: "+p.getCategoriaid().getNombre());
+//                System.out.println("]\n-------------------");
+//            }
         } catch (Exception e) {
             // Manejar excepción
             e.printStackTrace();

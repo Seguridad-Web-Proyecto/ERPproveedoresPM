@@ -110,16 +110,11 @@ public class ProductoController1 implements Serializable
         return items;
     }
 
-    
-
-    
-
     public List<Producto> getItemsWs()
     {
-        if (items == null)
-        {
-            items = APIConsumer.productos("");
-        }
+
+        items = APIConsumer.productos("");
+
         return items;
     }
 
