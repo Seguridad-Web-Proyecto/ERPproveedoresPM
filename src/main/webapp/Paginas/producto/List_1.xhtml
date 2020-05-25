@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml">
+
+
+        <ui:define name="title">
+            <h:outputText value="Solicitar Productos"></h:outputText>
+        </ui:define>
+
+        <ui:define name="body">
+            <h:form id="ProductoList1Form">
+                <p:panel header="Módulo Solicitar Producto">
+                    <p:dataTable id="datalist1" value="#{productoController1.itemsWs}" var="prod"
+                                 selection="#{productoController1.selectedWs}"
+                                 paginator="true"
+                                 rowKey="#{prod.productoid}"
+                                 rows="10"
+                                 rowsPerPageTemplate="10,20,30,40,50"
+                                 >
+
+                        <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#"/>
+                            </f:facet>
+                            <h:outputText value="#{prod.productoid}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Nombre"/>
+                            </f:facet>
+                            <h:outputText value="#{prod.nombre}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Descripción"/>
+                            </f:facet>
+                            <h:outputText value="#{prod.descripcion}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Unidad Medida"/>
+                            </f:facet>
+                            <h:outputText value="#{prod.unidadMedida}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Precio Unitario"/>
+                            </f:facet>
+                            <h:outputText value="#{prod.precioUnitario}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Categoría"/>
+                            </f:facet>
+                            <h:outputText value="#{prod.categoriaid}"/>
+                        </p:column>
+                        <f:facet name="footer">
+                            <p:commandButton process="datalist1" icon="ui-icon-plus" value="Solicitar" oncomplete="PF('modal1').show();" update=":modal1"/>
+                        </f:facet>
+                    </p:dataTable>
+                </p:panel>
+
+            </h:form>
+            <p:dialog header="Solicitud" widgetVar="modal1" height="100">
+                Usted solicitó:
+                <p:outputPanel id="modal1" style="text-align:center;">
+            <ui:repeat value="#{productoController1.selectedWs}" var="prod">
+                <h:outputText value="#{prod.productoid} - #{prod.nombre}" style="display:block"/>
+            </ui:repeat>
+        </p:outputPanel>
+            </p:dialog>
+        </ui:define>
+    </ui:composition>
+
+</html>

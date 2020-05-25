@@ -35,6 +35,10 @@ public class APIConsumer {
     private static final String pathCategorias = "http://localhost:8080/ERPsubproveedoresPM/webresources/categorias";
     
     private static final String USER_AGENT = "Mozilla/5.0";
+     private static final String URL_BASE = "http://localhost:8080/ERPsubproveedoresPM/webresources";
+    private static WebTarget webTarget;
+    private static Client clientHttp;
+    private static Invocation.Builder invocationBuilder;
     
     public static List<Producto> productos(String path){
         List<Producto> productoList = new ArrayList<>();
@@ -46,22 +50,34 @@ public class APIConsumer {
             String jsonString = new String(respuesta.getBytes("ISO-8859-1"), "UTF-8");
             ObjectMapper mapper = new ObjectMapper();
             productoList = mapper.readValue(jsonString, new TypeReference<List<Producto>>(){});
-            for(Producto p: productoList){
-                System.out.println("-------------------");
-                System.out.println("productoid: "+p.getProductoid());
-                System.out.println("nombre: "+p.getNombre());
-                System.out.println("descripcion: "+p.getDescripcion());
-                System.out.println("unidad de medida: "+p.getUnidadMedida());
-                System.out.println("categoría[ ");
-                System.out.println("categoriaid: "+p.getCategoriaid());
-                System.out.println("categoría nombre: "+p.getCategoriaid().getNombre());
-                System.out.println("]\n-------------------");
-            }
+//            for(Producto p: productoList){
+//                System.out.println("-------------------");
+//                System.out.println("productoid: "+p.getProductoid());
+//                System.out.println("nombre: "+p.getNombre());
+//                System.out.println("descripcion: "+p.getDescripcion());
+//                System.out.println("unidad de medida: "+p.getUnidadMedida());
+//                System.out.println("categoría[ ");
+//                System.out.println("categoriaid: "+p.getCategoriaid());
+//                System.out.println("categoría nombre: "+p.getCategoriaid().getNombre());
+//                System.out.println("]\n-------------------");
+//            }
         } catch (Exception e) {
             // Manejar excepción
             e.printStackTrace();
         }
         return productoList;
+    }
+    
+    public static List<Producto> getProductos() throws JsonProcessingException{
+        System.out.println("Solicitando productos...");
+        clientHttp = ClientBuilder.newClient();
+        webTarget = clientHttp.target("http://localhost:8080/ERPsubproveedoresPM/webresources").path("/productos");
+        invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
+        Response response = invocationBuilder.get();
+        System.out.println("Respuesta: "+response.getStatus());
+        List<Producto> productos = new ObjectMapper().
+                readValue(response.readEntity(String.class), new TypeReference<List<Producto>>(){});
+        return productos;
     }
     
     public static Producto obtenerProductoXId(Long productoid){
@@ -159,10 +175,7 @@ public class APIConsumer {
         return respuesta;
     }
     
-    private static final String URL_BASE = "http://localhost:8080/ERPsubproveedoresPM/webresources";
-    private static WebTarget webTarget;
-    private static Client clientHttp;
-    private static Invocation.Builder invocationBuilder;
+   
     
     public static Response realizarPedido(Ordenventa ordenventa){
         System.out.println("Proveedores -> Realizando pedido a subproveedores...");
