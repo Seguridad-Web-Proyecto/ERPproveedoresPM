@@ -22,12 +22,13 @@ import javax.ws.rs.core.Response;
 public class SolicitarPedidos {
 
     public static void main(String[] args) throws JsonProcessingException {
-        Ordenventa ordenventa = pruebaGenerarPedido();
+        /*Ordenventa ordenventa = pruebaGenerarPedido();
         System.out.println(ordenventa);
         Response response = pruebaAgregarDetallesAlPedido(ordenventa);
         System.out.println("Solicitando pedido...");
         Response responseSolicitar = APIConsumer.concluirPedido(ordenventa);
-        System.out.println("Respuesta: "+responseSolicitar.getStatus());
+        System.out.println("Respuesta: "+responseSolicitar.getStatus());*/
+        System.out.println(APIConsumer.getProductos());
     }
     
     public static Ordenventa pruebaGenerarPedido() {

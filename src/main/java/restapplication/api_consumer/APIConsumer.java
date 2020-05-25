@@ -5,6 +5,7 @@
  */
 package restapplication.api_consumer;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import entidades.Categoria;
@@ -194,6 +195,18 @@ public class APIConsumer {
         Response response = invocationBuilder.put(Entity.entity(ordenventa, MediaType.APPLICATION_JSON));
         System.out.println("Respuesta: "+response.getStatus());
         return response;
+    }
+    
+    public static List<Producto> getProductos() throws JsonProcessingException{
+        System.out.println("Solicitando productos...");
+        clientHttp = ClientBuilder.newClient();
+        webTarget = clientHttp.target(URL_BASE).path("/productos");
+        invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
+        Response response = invocationBuilder.get();
+        System.out.println("Respuesta: "+response.getStatus());
+        List<Producto> productos = new ObjectMapper().
+                readValue(response.readEntity(String.class), new TypeReference<List<Producto>>(){});
+        return productos;
     }
     
 }
