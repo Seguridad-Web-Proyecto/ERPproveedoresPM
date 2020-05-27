@@ -53,13 +53,15 @@ public class ProductoFacadeREST extends AbstractFacade<Producto> {
     @Override
     @Produces(MediaType.APPLICATION_JSON)
     public List<Producto> findAll() {
-//        List<Producto> productos = super.findAll();
-//        List<Producto> returnList = new ArrayList<>();
-//        for(Producto p: productos){
-//            //p = Common.aplicarGananciaAlProducto(p);
-//            returnList.add(p);
-//        }
-        List<Producto> returnList = APIConsumer.productos("");
+        List<Producto> productosAPI = APIConsumer.productos("");
+        List<Producto> returnList = new ArrayList<>();
+        for(Producto producto: productosAPI){
+            Ganancia ganancia = new Ganancia();
+            ganancia.setPorcentaje((short)10);
+            producto.setGanancia(ganancia);
+            Producto p = Common.aplicarGananciaAlProducto(producto);
+            returnList.add(p);
+        }
         return returnList;
     }
 

@@ -83,7 +83,7 @@ public class OrdenventaFacadeREST extends AbstractFacade<Ordenventa> {
         return response;
     }
     
-    @PUT
+    @POST
     @Path("/solicitar")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
