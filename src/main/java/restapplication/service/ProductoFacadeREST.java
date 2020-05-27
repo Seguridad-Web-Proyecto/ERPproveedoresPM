@@ -5,6 +5,7 @@
  */
 package restapplication.service;
 
+import entidades.Ganancia;
 import restapplication.service.AbstractFacade;
 import entidades.Producto;
 import java.util.ArrayList;
@@ -40,9 +41,11 @@ public class ProductoFacadeREST extends AbstractFacade<Producto> {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Producto find(@PathParam("id") Long id) {
-        /*Producto producto = super.find(id);
-        Producto p = Common.aplicarGananciaAlProducto(producto);*/
-        Producto p = APIConsumer.obtenerProductoXId(id);
+        Producto producto = APIConsumer.obtenerProductoXId(id);
+        Ganancia ganancia = new Ganancia();
+        ganancia.setPorcentaje((short)10);
+        producto.setGanancia(ganancia);
+        Producto p = Common.aplicarGananciaAlProducto(producto);
         return p;
     }
     

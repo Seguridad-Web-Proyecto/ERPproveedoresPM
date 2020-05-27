@@ -26,6 +26,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import restapplication.pojos.Inventario;
 
 /**
  *
@@ -80,6 +81,8 @@ public class Producto implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "producto")
     private Collection<Ventadetalle> ventadetalleCollection;
 
+    private Collection<Inventario> inventarioCollection;
+    
     public Producto() {
     }
 
@@ -196,6 +199,14 @@ public class Producto implements Serializable {
     @Override
     public String toString() {
         return "entidades.Producto[ productoid=" + productoid + " ]";
+    }
+
+    public Collection<Inventario> getInventarioCollection() {
+        return inventarioCollection;
+    }
+
+    public void setInventarioCollection(Collection<Inventario> inventarioCollection) {
+        this.inventarioCollection = inventarioCollection;
     }
     
 }

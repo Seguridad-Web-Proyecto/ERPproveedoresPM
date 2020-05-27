@@ -9,8 +9,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import entidades.Categoria;
+import entidades.Cliente;
+import entidades.Facturaventa;
 import entidades.Ordenventa;
 import entidades.Producto;
+import entidades.Ventadetalle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -175,8 +178,6 @@ public class APIConsumer {
         return respuesta;
     }
     
-   
-    
     public static Response realizarPedido(Ordenventa ordenventa){
         System.out.println("Proveedores -> Realizando pedido a subproveedores...");
         clientHttp = ClientBuilder.newClient();
@@ -205,21 +206,40 @@ public class APIConsumer {
         clientHttp = ClientBuilder.newClient();
         webTarget = clientHttp.target(URL_BASE).path("/pedidos/solicitar");
         invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
-        Response response = invocationBuilder.put(Entity.entity(ordenventa, MediaType.APPLICATION_JSON));
+        Response response = invocationBuilder.post(Entity.entity(ordenventa, MediaType.APPLICATION_JSON));
         System.out.println("Respuesta: "+response.getStatus());
         return response;
     }
     
-    public static List<Producto> getProductos() throws JsonProcessingException{
-        System.out.println("Solicitando productos...");
-        clientHttp = ClientBuilder.newClient();
-        webTarget = clientHttp.target(URL_BASE).path("/productos");
-        invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
-        Response response = invocationBuilder.get();
-        System.out.println("Respuesta: "+response.getStatus());
-        List<Producto> productos = new ObjectMapper().
-                readValue(response.readEntity(String.class), new TypeReference<List<Producto>>(){});
-        return productos;
+    public static Facturaventa generarPedidoCompleto(String descripcion, ArrayList<Ventadetalle> ventaDetalleList) throws Exception{
+        Ordenventa ordenventa = new Ordenventa();
+        Cliente cliente = new Cliente();
+        cliente.setEmail("compras@walmart.com.mx");
+        ordenventa.setClienteid(cliente);
+        ordenventa.setDescripcion(descripcion);
+        ordenventa.setVentadetalleCollection(ventaDetalleList);
+        Response responseOrdenVenta = APIConsumer.realizarPedido(ordenventa);
+        if(responseOrdenVenta.getStatus()!=200){
+            String msg = responseOrdenVenta.readEntity(String.class);
+            throw new Exception("Whoops!!. Error al realizar un pedido!\n"+msg);
+        }
+        // DETALLES
+        Ordenventa ordenVentaResult = responseOrdenVenta.readEntity(Ordenventa.class);
+        ordenVentaResult.setVentadetalleCollection(ventaDetalleList);
+        Response responseDetalles = APIConsumer.agregarDetallesAlPedido(ordenVentaResult);
+
+        if(responseDetalles.getStatus()!=200){
+            String msg = responseDetalles.readEntity(String.class);
+            throw new Exception("Whoops!!. Error al añadir los detalles al pedido!\n"+msg); 
+        }
+        // CONLUYENDO PEDIDO Y RECIBIENDO LA FACTURA
+        Response responseCompletarPedido = APIConsumer.concluirPedido(ordenVentaResult);
+        Facturaventa facturaVenta = responseCompletarPedido.readEntity(Facturaventa.class);
+        if(responseCompletarPedido.getStatus()!=200){
+            throw new Exception("Whoops!!. Error al concluir el pedido!");
+        }
+        return facturaVenta;
     }
+   
     
 }

@@ -5,6 +5,7 @@
  */
 package entidades;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
@@ -49,11 +50,13 @@ public class Facturacompra implements Serializable {
     @NotNull
     @Column(name = "fecha_emision")
     @Temporal(TemporalType.DATE)
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
     private Date fechaEmision;
     @Basic(optional = false)
     @NotNull
     @Column(name = "fecha_vencimiento_pago")
     @Temporal(TemporalType.DATE)
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
     private Date fechaVencimientoPago;
     @Basic(optional = false)
     @NotNull

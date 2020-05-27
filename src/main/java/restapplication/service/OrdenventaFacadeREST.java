@@ -94,25 +94,6 @@ public class OrdenventaFacadeREST extends AbstractFacade<Ordenventa> {
         }else{
             ordenventa.setStatus("Pedido realizado!");
             // solicitar pedidos subproveedores
-            Ordenventa nuevaOrden = new Ordenventa();
-            Cliente cliente = new Cliente();
-            cliente.setEmail("compras@walmart.com.mx");
-            nuevaOrden.setClienteid(cliente);
-            nuevaOrden.setDescripcion("Realizando pedido para el proveedor");
-            /*Response responsePedido = APIConsumer.realizarPedido(nuevaOrden);
-            Ordenventa ventaResponse = responsePedido.readEntity(Ordenventa.class);
-            
-            ArrayList<Ventadetalle> ventadetalleList = new ArrayList<>();
-            for(Ventadetalle vd: ordenventa.getVentadetalleCollection()){
-                Ventadetalle ventadetalle = new Ventadetalle();
-                ventadetalle.setCantidad(vd.getCantidad());
-                ventadetalle.setOrdenventa(ventaResponse);
-                ventadetalle.setProducto(vd.getProducto());
-            }
-            ventaResponse.setVentadetalleCollection(ventadetalleList);
-            
-            Response responseDetalles = APIConsumer.agregarDetallesAlPedido(ventaResponse);
-            Response concluirPedido = APIConsumer.concluirPedido(ventaResponse);*/
             return Response.ok().build();
         }
     }
