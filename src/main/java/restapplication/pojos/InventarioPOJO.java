@@ -7,9 +7,11 @@ package restapplication.pojos;
 
 import entidades.Producto;
 import java.io.Serializable;
+import javax.ejb.Stateless;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.xml.bind.annotation.XmlTransient;
 
+@Stateless
 public class InventarioPOJO implements Serializable {
 
     private static final long serialVersionUID = 1L;

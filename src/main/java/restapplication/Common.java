@@ -29,7 +29,7 @@ public class Common {
         gananciaxproducto /= 100;
         int nuevoPrecio = (int)producto.getPrecioUnitario() + gananciaxproducto;
         ProductoPOJO productoQ = new ProductoPOJO(producto.getProductoid(), producto.getNombre(), 
-                producto.getDescripcion(), producto.getUnidadMedida(), nuevoPrecio);
+                producto.getDescripcion(), producto.getUnidadMedida(), nuevoPrecio,producto.getExist(), producto.getCantidad());
         productoQ.setCategoriaid(producto.getCategoriaid());
         if(producto.getInventarioCollection()!=null){
             productoQ.setInventarioCollection(producto.getInventarioCollection());

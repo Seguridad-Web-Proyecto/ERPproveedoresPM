@@ -10,12 +10,15 @@ import entidades.Compradetalle;
 import entidades.Ganancia;
 import entidades.Ventadetalle;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import javax.ejb.Stateless;
 
 /**
  *
  * @author jcami
  */
+@Stateless
 public class ProductoPOJO implements Serializable{
     private static final long serialVersionUID = 1L;
 
@@ -38,16 +41,21 @@ public class ProductoPOJO implements Serializable{
     private Collection<Ventadetalle> ventadetalleCollection;
     
     private Collection<InventarioPOJO> inventarioCollection;
+    
+    private int exist;
+    private int cantidad;
 
     public ProductoPOJO() {
     }
     
-    public ProductoPOJO(Long productoid, String nombre, String descripcion, String unidadMedida, int precioUnitario) {
+    public ProductoPOJO(Long productoid, String nombre, String descripcion, String unidadMedida, int precioUnitario, int exist, int cantidad) {
         this.productoid = productoid;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.unidadMedida = unidadMedida;
         this.precioUnitario = precioUnitario;
+        this.exist = exist;
+        this.cantidad = cantidad;
     }
 
     public Long getProductoid() {
@@ -129,6 +137,29 @@ public class ProductoPOJO implements Serializable{
     public void setInventarioCollection(Collection<InventarioPOJO> inventarioCollection) {
         this.inventarioCollection = inventarioCollection;
     }
+
+    public int getExist()
+    {
+        ArrayList<InventarioPOJO> inventarios = (ArrayList<InventarioPOJO>) this.getInventarioCollection();
+            exist=inventarios.get(0).getExistencias();
+        return exist;
+    }
+
+    public void setExist(int exist)
+    {
+        this.exist = exist;
+    } 
+
+    public int getCantidad()
+    {
+        return cantidad;
+    }
+
+    public void setCantidad(int cantidad)
+    {
+        this.cantidad = cantidad;
+    }
+    
     
     
     

@@ -44,11 +44,11 @@ import restapplication.pojos.ProductoPOJO;
 @Stateless
 public class APIConsumer {
     
-    private static final String pathProductos = "http://localhost:8080/ERPsubproveedoresPM/webresources/productos";
-    private static final String pathCategorias = "http://localhost:8080/ERPsubproveedoresPM/webresources/categorias";
+    private static final String pathProductos = "https://41571ca69447.ngrok.io/ERPsubproveedoresPM/webresources/productos";
+    private static final String pathCategorias = "https://41571ca69447.ngrok.io/ERPsubproveedoresPM/webresources/categorias";
     
     private static final String USER_AGENT = "Mozilla/5.0";
-     private static final String URL_BASE = "http://localhost:8080/ERPsubproveedoresPM/webresources";
+     private static final String URL_BASE = "https://41571ca69447.ngrok.io/ERPsubproveedoresPM/webresources";
     private static WebTarget webTarget;
     private static Client clientHttp;
     private static Invocation.Builder invocationBuilder;
@@ -73,7 +73,7 @@ public class APIConsumer {
     public static List<Producto> getProductos() throws JsonProcessingException{
         System.out.println("Solicitando productos...");
         clientHttp = ClientBuilder.newClient();
-        webTarget = clientHttp.target("http://localhost:8080/ERPsubproveedoresPM/webresources").path("/productos");
+        webTarget = clientHttp.target("https://41571ca69447.ngrok.io/ERPsubproveedoresPM/webresources").path("/productos");
         invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
         Response response = invocationBuilder.get();
         System.out.println("Respuesta: "+response.getStatus());
