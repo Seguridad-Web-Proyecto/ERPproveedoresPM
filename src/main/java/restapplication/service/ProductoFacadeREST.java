@@ -21,6 +21,7 @@ import javax.ws.rs.core.MediaType;
 import restapplication.Common;
 import restapplication.api_consumer.APIConsumer;
 import restapplication.api_consumer.ClienteHTTP;
+import restapplication.pojos.ProductoPOJO;
 
 /**
  *
@@ -50,16 +51,15 @@ public class ProductoFacadeREST extends AbstractFacade<Producto> {
     }
     
     @GET
-    @Override
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Producto> findAll() {
-        List<Producto> productosAPI = APIConsumer.productos("");
-        List<Producto> returnList = new ArrayList<>();
-        for(Producto producto: productosAPI){
+    public List<ProductoPOJO> findEverything() {
+        List<ProductoPOJO> productosAPI = APIConsumer.productos("");
+        List<ProductoPOJO> returnList = new ArrayList<>();
+        for(ProductoPOJO producto: productosAPI){
             Ganancia ganancia = new Ganancia();
             ganancia.setPorcentaje((short)10);
             producto.setGanancia(ganancia);
-            Producto p = Common.aplicarGananciaAlProducto(producto);
+            ProductoPOJO p = Common.aplicarGananciaAlProductoPOJO(producto);
             returnList.add(p);
         }
         return returnList;
@@ -68,8 +68,8 @@ public class ProductoFacadeREST extends AbstractFacade<Producto> {
     @GET
     @Path("{from}/{to}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Producto> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
-        List<Producto> returnList = APIConsumer.productos("/"+from.toString()+"/"+to.toString());
+    public List<ProductoPOJO> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
+        List<ProductoPOJO> returnList = APIConsumer.productos("/"+from.toString()+"/"+to.toString());
         return returnList;
     }
 

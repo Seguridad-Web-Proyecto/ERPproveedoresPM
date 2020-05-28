@@ -109,19 +109,6 @@ public class ProductoController implements Serializable
         return items;
     }
 
-    
-
-    
-
-    public List<Producto> getItemsWs()
-    {
-        if (items == null)
-        {
-            items = APIConsumer.productos("");
-        }
-        return items;
-    }
-
     private void persist(PersistAction persistAction, String successMessage)
     {
         if (selected != null)

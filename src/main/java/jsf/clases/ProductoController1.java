@@ -20,6 +20,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import restapplication.api_consumer.APIConsumer;
+import restapplication.pojos.ProductoPOJO;
 import restapplication.service.ProductoFacadeREST;
 
 @Named("productoController1")
@@ -27,32 +28,30 @@ import restapplication.service.ProductoFacadeREST;
 public class ProductoController1 implements Serializable
 {
 
-    @EJB
-    private ProductoFacadeREST ejbFacade;
-    private List<Producto> items = null;
-    private Producto selected;
-    private List<Producto> selectedWs;
+    private List<ProductoPOJO> items = null;
+    private ProductoPOJO selected;
+    private List<ProductoPOJO> selectedWs;
 
     public ProductoController1()
     {
     }
 
-    public Producto getSelected()
+    public ProductoPOJO getSelected()
     {
         return selected;
     }
 
-    public void setSelected(Producto selected)
+    public void setSelected(ProductoPOJO selected)
     {
         this.selected = selected;
     }
 
-    public List<Producto> getSelectedWs()
+    public List<ProductoPOJO> getSelectedWs()
     {
         return selectedWs;
     }
 
-    public void setSelectedWs(List<Producto> selectedWs)
+    public void setSelectedWs(List<ProductoPOJO> selectedWs)
     {
         this.selectedWs = selectedWs;
     }
@@ -65,163 +64,10 @@ public class ProductoController1 implements Serializable
     {
     }
 
-    private ProductoFacadeREST getFacade()
+    public List<ProductoPOJO> getItemsWs()
     {
-        return ejbFacade;
-    }
-
-    public Producto prepareCreate()
-    {
-        selected = new Producto();
-        initializeEmbeddableKey();
-        return selected;
-    }
-
-    public void create()
-    {
-        persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("ProductoCreated"));
-        if (!JsfUtil.isValidationFailed())
-        {
-            items = null;    // Invalidate list of items to trigger re-query.
-        }
-    }
-
-    public void update()
-    {
-        persist(PersistAction.UPDATE, ResourceBundle.getBundle("/Bundle").getString("ProductoUpdated"));
-    }
-
-    public void destroy()
-    {
-        persist(PersistAction.DELETE, ResourceBundle.getBundle("/Bundle").getString("ProductoDeleted"));
-        if (!JsfUtil.isValidationFailed())
-        {
-            selected = null; // Remove selection
-            items = null;    // Invalidate list of items to trigger re-query.
-        }
-    }
-
-    public List<Producto> getItems()
-    {
-        if (items == null)
-        {
-            items = getFacade().findAll();
-        }
-        return items;
-    }
-
-    public List<Producto> getItemsWs()
-    {
-
         items = APIConsumer.productos("");
-
         return items;
-    }
-
-    private void persist(PersistAction persistAction, String successMessage)
-    {
-        if (selected != null)
-        {
-            setEmbeddableKeys();
-            try
-            {
-                if (persistAction != PersistAction.DELETE)
-                {
-                    getFacade().edit(selected);
-                } else
-                {
-                    getFacade().remove(selected);
-                }
-                JsfUtil.addSuccessMessage(successMessage);
-            } catch (EJBException ex)
-            {
-                String msg = "";
-                Throwable cause = ex.getCause();
-                if (cause != null)
-                {
-                    msg = cause.getLocalizedMessage();
-                }
-                if (msg.length() > 0)
-                {
-                    JsfUtil.addErrorMessage(msg);
-                } else
-                {
-                    JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
-                }
-            } catch (Exception ex)
-            {
-                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-                JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
-            }
-        }
-    }
-
-    public Producto getProducto(java.lang.Long id)
-    {
-        return getFacade().find(id);
-    }
-
-    public List<Producto> getItemsAvailableSelectMany()
-    {
-        return getFacade().findAll();
-    }
-
-    public List<Producto> getItemsAvailableSelectOne()
-    {
-        return getFacade().findAll();
-    }
-
-    @FacesConverter(forClass = Producto.class)
-    public static class ProductoControllerConverter implements Converter
-    {
-
-        @Override
-        public Object getAsObject(FacesContext facesContext, UIComponent component, String value)
-        {
-            if (value == null || value.length() == 0)
-            {
-                return null;
-            }
-            ProductoController1 controller = (ProductoController1) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "productoController");
-            return controller.getProducto(getKey(value));
-        }
-
-        java.lang.Long getKey(String value)
-        {
-            java.lang.Long key;
-            key = Long.valueOf(value);
-            return key;
-        }
-
-        String getStringKey(java.lang.Long value)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.append(value);
-            return sb.toString();
-        }
-
-        @Override
-        public String getAsString(FacesContext facesContext, UIComponent component, Object object)
-        {
-            if (object == null)
-            {
-                return null;
-            }
-            if (object instanceof Producto)
-            {
-                Producto o = (Producto) object;
-                return getStringKey(o.getProductoid());
-            } else
-            {
-                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "object {0} is of type {1}; expected type: {2}", new Object[]
-                {
-                    object, object.getClass().getName(), Producto.class.getName()
-                });
-                return null;
-            }
-        }
-
     }
 
 }

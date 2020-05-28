@@ -16,6 +16,7 @@ import entidades.Producto;
 import entidades.Ventadetalle;
 import java.util.ArrayList;
 import java.util.List;
+import javax.ejb.Stateless;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -27,11 +28,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.client.ClientBuilder;
 
 import static restapplication.api_consumer.ClienteHTTP.peticionHttpGet;
+import restapplication.pojos.ProductoPOJO;
 
 /**
  *
  * @author jcami
  */
+@Stateless
 public class APIConsumer {
     
     private static final String pathProductos = "http://localhost:8080/ERPsubproveedoresPM/webresources/productos";
@@ -43,8 +46,8 @@ public class APIConsumer {
     private static Client clientHttp;
     private static Invocation.Builder invocationBuilder;
     
-    public static List<Producto> productos(String path){
-        List<Producto> productoList = new ArrayList<>();
+    public static List<ProductoPOJO> productos(String path){
+        List<ProductoPOJO> productoList = new ArrayList<>();
         String url = pathProductos+path;
         String respuesta = "";
         try {
@@ -52,18 +55,7 @@ public class APIConsumer {
             System.out.println("La respuesta es:\n" + respuesta);
             String jsonString = new String(respuesta.getBytes("ISO-8859-1"), "UTF-8");
             ObjectMapper mapper = new ObjectMapper();
-            productoList = mapper.readValue(jsonString, new TypeReference<List<Producto>>(){});
-//            for(Producto p: productoList){
-//                System.out.println("-------------------");
-//                System.out.println("productoid: "+p.getProductoid());
-//                System.out.println("nombre: "+p.getNombre());
-//                System.out.println("descripcion: "+p.getDescripcion());
-//                System.out.println("unidad de medida: "+p.getUnidadMedida());
-//                System.out.println("categoría[ ");
-//                System.out.println("categoriaid: "+p.getCategoriaid());
-//                System.out.println("categoría nombre: "+p.getCategoriaid().getNombre());
-//                System.out.println("]\n-------------------");
-//            }
+            productoList = mapper.readValue(jsonString, new TypeReference<List<ProductoPOJO>>(){});
         } catch (Exception e) {
             // Manejar excepción
             e.printStackTrace();
@@ -227,7 +219,6 @@ public class APIConsumer {
         Ordenventa ordenVentaResult = responseOrdenVenta.readEntity(Ordenventa.class);
         ordenVentaResult.setVentadetalleCollection(ventaDetalleList);
         Response responseDetalles = APIConsumer.agregarDetallesAlPedido(ordenVentaResult);
-
         if(responseDetalles.getStatus()!=200){
             String msg = responseDetalles.readEntity(String.class);
             throw new Exception("Whoops!!. Error al añadir los detalles al pedido!\n"+msg); 

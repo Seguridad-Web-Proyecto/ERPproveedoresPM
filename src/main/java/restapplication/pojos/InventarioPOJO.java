@@ -10,7 +10,7 @@ import java.io.Serializable;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.xml.bind.annotation.XmlTransient;
 
-public class Inventario implements Serializable {
+public class InventarioPOJO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     
@@ -20,14 +20,14 @@ public class Inventario implements Serializable {
     
     private Producto productoid;
 
-    public Inventario() {
+    public InventarioPOJO() {
     }
 
-    public Inventario(Long inventarioid) {
+    public InventarioPOJO(Long inventarioid) {
         this.inventarioid = inventarioid;
     }
 
-    public Inventario(Long inventarioid, int existencias) {
+    public InventarioPOJO(Long inventarioid, int existencias) {
         this.inventarioid = inventarioid;
         this.existencias = existencias;
     }
@@ -68,10 +68,10 @@ public class Inventario implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Inventario)) {
+        if (!(object instanceof InventarioPOJO)) {
             return false;
         }
-        Inventario other = (Inventario) object;
+        InventarioPOJO other = (InventarioPOJO) object;
         if ((this.inventarioid == null && other.inventarioid != null) || (this.inventarioid != null && !this.inventarioid.equals(other.inventarioid))) {
             return false;
         }

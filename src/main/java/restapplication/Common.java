@@ -15,12 +15,26 @@ import entidades.VentadetallePK;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import restapplication.pojos.ProductoPOJO;
 
 /**
  *
  * @author jcami
  */
 public class Common {
+    
+    public static ProductoPOJO aplicarGananciaAlProductoPOJO(ProductoPOJO producto){
+        int gananciaxproducto = ((int)producto.getGanancia().getPorcentaje())*(int)producto.getPrecioUnitario();
+        gananciaxproducto /= 100;
+        int nuevoPrecio = (int)producto.getPrecioUnitario() + gananciaxproducto;
+        ProductoPOJO productoQ = new ProductoPOJO(producto.getProductoid(), producto.getNombre(), 
+                producto.getDescripcion(), producto.getUnidadMedida(), nuevoPrecio);
+        productoQ.setCategoriaid(producto.getCategoriaid());
+        if(producto.getInventarioCollection()!=null){
+            productoQ.setInventarioCollection(producto.getInventarioCollection());
+        }
+        return productoQ;
+    }
     
     public static Producto aplicarGananciaAlProducto(Producto producto){
         int gananciaxproducto = ((int)producto.getGanancia().getPorcentaje())*(int)producto.getPrecioUnitario();
@@ -29,9 +43,6 @@ public class Common {
         Producto productoQ = new Producto(producto.getProductoid(), producto.getNombre(), 
                 producto.getDescripcion(), producto.getUnidadMedida(), nuevoPrecio);
         productoQ.setCategoriaid(producto.getCategoriaid());
-        if(producto.getInventarioCollection()!=null){
-            productoQ.setInventarioCollection(producto.getInventarioCollection());
-        }
         return productoQ;
     }
     

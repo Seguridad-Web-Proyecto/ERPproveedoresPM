@@ -32,7 +32,7 @@ public class SolicitarPedidos {
                 producto.setProductoid(i);
                 Ventadetalle ventadetalle = new Ventadetalle();
                 ventadetalle.setProducto(producto);
-                ventadetalle.setCantidad(3000);
+                ventadetalle.setCantidad(30);
                 detalles.add(ventadetalle);
             }
             APIConsumer.generarPedidoCompleto("Solicitando productos para walmart", detalles);
