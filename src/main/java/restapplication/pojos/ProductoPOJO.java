@@ -13,6 +13,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.ejb.Stateless;
+import javax.json.bind.annotation.JsonbTransient;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -138,6 +140,8 @@ public class ProductoPOJO implements Serializable{
         this.inventarioCollection = inventarioCollection;
     }
 
+    @XmlTransient
+    @JsonbTransient
     public int getExist()
     {
         ArrayList<InventarioPOJO> inventarios = (ArrayList<InventarioPOJO>) this.getInventarioCollection();
@@ -150,6 +154,8 @@ public class ProductoPOJO implements Serializable{
         this.exist = exist;
     } 
 
+    @XmlTransient
+    @JsonbTransient
     public int getCantidad()
     {
         return cantidad;
