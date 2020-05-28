@@ -6,14 +6,15 @@
       xmlns:p="http://primefaces.org/ui">
 
     <h:head>
-        <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://apis.google.com"></meta>
+        
         <title><ui:insert name="title">Default Title</ui:insert></title>
         <h:outputStylesheet library="css" name="jsfcrud.css"/>
         <h:outputScript library="js" name="jsfcrud.js"/>
     </h:head>
 
     <h:body>
-
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://apis.google.com"></meta>
+        
         <p:growl id="growl" life="3000" />
 
         <p:layout fullPage="true">
