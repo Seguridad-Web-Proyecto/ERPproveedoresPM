@@ -1,30 +1,21 @@
 package jsf.clases;
 
 import entidades.Producto;
-import jsf.clases.util.JsfUtil;
-import jsf.clases.util.JsfUtil.PersistAction;
-import beans.sessions.ProductoFacade;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import entidades.Facturaventa;
 import entidades.Ventadetalle;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.EJB;
-import javax.ejb.EJBException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.FacesConverter;
+import javax.print.attribute.HashAttributeSet;
 import restapplication.api_consumer.APIConsumer;
+import restapplication.pojos.InventarioPOJO;
 import restapplication.pojos.ProductoPOJO;
-import restapplication.service.ProductoFacadeREST;
 
 @Named("productoController1")
 @SessionScoped
@@ -34,6 +25,7 @@ public class ProductoController1 implements Serializable
     private List<ProductoPOJO> items = null;
     private ProductoPOJO selected;
     private List<ProductoPOJO> selectedWs;
+
 
     public ProductoController1()
     {
@@ -72,8 +64,11 @@ public class ProductoController1 implements Serializable
         items = APIConsumer.productos("");
         return items;
     }
+
+
+
     
-    private void solicitarPedido(){
+    public void solicitarPedido(){
         ArrayList<Ventadetalle> ventadetalleList = new ArrayList<>();
         for(ProductoPOJO productoWs: selectedWs){
             //Construimos el producto para solicitar
@@ -82,7 +77,7 @@ public class ProductoController1 implements Serializable
             //Construimos el objeto de venta detalle
             Ventadetalle ventadetalle = new Ventadetalle();
             ventadetalle.setProducto(producto);
-            ventadetalle.setCantidad(0);
+            ventadetalle.setCantidad(productoWs.getCantidad());
             ventadetalleList.add(ventadetalle);
         }
         try {

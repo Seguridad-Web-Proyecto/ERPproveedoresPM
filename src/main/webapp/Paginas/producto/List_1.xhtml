@@ -61,8 +61,22 @@
                             </f:facet>
                             <h:outputText value="#{prod.categoriaid}"/>
                         </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Inventario"/>
+                            </f:facet>
+                            <h:outputText value="#{prod.exist}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText  value="Cantidad deseada"/>
+                            </f:facet>
+                            <p:inputText  id="cant" value="#{prod.cantidad}">
+                                <p:ajax immediate="true" rendered="true"/> 
+                            </p:inputText>
+                        </p:column>
                         <f:facet name="footer">
-                            <p:commandButton process="datalist1" icon="ui-icon-plus" value="Solicitar" oncomplete="PF('modal1').show();" update=":modal1"/>
+                            <p:commandButton action="#{productoController1.solicitarPedido()}" process="datalist1" icon="ui-icon-plus" value="Solicitar" oncomplete="PF('modal1').show();" update=":modal1"/>
                         </f:facet>
                     </p:dataTable>
                 </p:panel>
@@ -71,10 +85,10 @@
             <p:dialog header="Solicitud" widgetVar="modal1" height="100">
                 Usted solicitó:
                 <p:outputPanel id="modal1" style="text-align:center;">
-            <ui:repeat value="#{productoController1.selectedWs}" var="prod">
-                <h:outputText value="#{prod.productoid} - #{prod.nombre}" style="display:block"/>
-            </ui:repeat>
-        </p:outputPanel>
+                    <ui:repeat value="#{productoController1.selectedWs}" var="prod">
+                        <h:outputText value="#{prod.productoid} - #{prod.nombre}" style="display:block"/>
+                    </ui:repeat>
+                </p:outputPanel>
             </p:dialog>
         </ui:define>
     </ui:composition>
