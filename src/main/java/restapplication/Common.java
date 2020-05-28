@@ -5,6 +5,7 @@
  */
 package restapplication;
 
+import entidades.Facturacompra;
 import entidades.Facturaventa;
 import entidades.Ordenventa;
 import entidades.Pagoventa;

@@ -13,7 +13,6 @@ import entidades.Producto;
 import entidades.Ventadetalle;
 import entidades.VentadetallePK;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.core.Response;
@@ -25,21 +24,22 @@ import javax.ws.rs.core.Response;
 public class SolicitarPedidos {
 
     public static void main(String[] args) throws JsonProcessingException {
-        try {
+        /*try {
             ArrayList<Ventadetalle> detalles = new ArrayList<>();
             for(long i=30; i<32; i++){
                 Producto producto = new Producto();
                 producto.setProductoid(i);
                 Ventadetalle ventadetalle = new Ventadetalle();
                 ventadetalle.setProducto(producto);
-                ventadetalle.setCantidad(30);
+                ventadetalle.setCantidad(10);
                 detalles.add(ventadetalle);
             }
             APIConsumer.generarPedidoCompleto("Solicitando productos para walmart", detalles);
         } catch (Exception ex) {
             //ex.printStackTrace();
             Logger.getLogger(SolicitarPedidos.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
+        APIConsumer.guardarOrdenCompra(new Ordenventa());
     }
     
     public static void pruebaGenerarPedidoCompleto(){
