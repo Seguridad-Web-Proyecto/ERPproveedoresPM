@@ -75,30 +75,30 @@ public class APIConsumer {
         return productos;
     }
     
-    public static Producto obtenerProductoXId(Long productoid){
+    public static ProductoPOJO obtenerProductoXId(Long productoid){
         String url = pathProductos+"/"+productoid.toString();
         String respuesta = "";
-        Producto producto= new Producto();
+        ProductoPOJO productoPOJO= new ProductoPOJO();
         try {
             respuesta = peticionHttpGet(url);
             System.out.println("La respuesta es:\n" + respuesta);
             String jsonString = new String(respuesta.getBytes("ISO-8859-1"), "UTF-8");
             ObjectMapper mapper = new ObjectMapper();
-            producto = mapper.readValue(jsonString, new TypeReference<Producto>(){});
-            System.out.println("-------------------");
-            System.out.println("productoid: "+producto.getProductoid());
-            System.out.println("nombre: "+producto.getNombre());
-            System.out.println("descripcion: "+producto.getDescripcion());
-            System.out.println("unidad de medida: "+producto.getUnidadMedida());
-            System.out.println("categoría[ ");
-            System.out.println("categoriaid: "+producto.getCategoriaid());
-            System.out.println("categoría nombre: "+producto.getCategoriaid().getNombre());
-            System.out.println("]\n-------------------");
+            productoPOJO = mapper.readValue(jsonString, new TypeReference<ProductoPOJO>(){});
+//            System.out.println("-------------------");
+//            System.out.println("productoid: "+productoPOJO.getProductoid());
+//            System.out.println("nombre: "+productoPOJO.getNombre());
+//            System.out.println("descripcion: "+productoPOJO.getDescripcion());
+//            System.out.println("unidad de medida: "+productoPOJO.getUnidadMedida());
+//            System.out.println("categoría[ ");
+//            System.out.println("categoriaid: "+productoPOJO.getCategoriaid());
+//            System.out.println("categoría nombre: "+productoPOJO.getCategoriaid().getNombre());
+//            System.out.println("]\n-------------------");
         } catch (Exception e) {
             // Manejar excepción
             e.printStackTrace();
         }
-        return producto;
+        return productoPOJO;
     }
     
     public static List<Categoria> categorias(String path){

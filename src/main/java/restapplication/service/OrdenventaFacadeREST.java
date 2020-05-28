@@ -126,7 +126,8 @@ public class OrdenventaFacadeREST extends AbstractFacade<Ordenventa> {
                     return Response.status(Status.BAD_REQUEST).build();
                 }
                 //PRODUCTO
-                Producto productoAPI = APIConsumer.obtenerProductoXId(entity.getProducto().getProductoid());
+                Producto productoAPI = Common.convertirProductoPojoAProducto(
+                        APIConsumer.obtenerProductoXId(entity.getProducto().getProductoid()));
                 if(productoAPI==null){
                     return Response.status(Status.NOT_FOUND).build();
                 }
