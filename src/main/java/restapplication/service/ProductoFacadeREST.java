@@ -41,18 +41,18 @@ public class ProductoFacadeREST extends AbstractFacade<Producto> {
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Producto find(@PathParam("id") Long id) {
-        Producto producto = APIConsumer.obtenerProductoXId(id);
+    public ProductoPOJO findProductoAPI(@PathParam("id") Long id) {
+        ProductoPOJO productoPOJO = APIConsumer.obtenerProductoXId(id);
         Ganancia ganancia = new Ganancia();
         ganancia.setPorcentaje((short)10);
-        producto.setGanancia(ganancia);
-        Producto p = Common.aplicarGananciaAlProducto(producto);
+        productoPOJO.setGanancia(ganancia);
+        ProductoPOJO p = Common.aplicarGananciaAlProductoPOJO(productoPOJO);
         return p;
     }
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ProductoPOJO> findEverything() {
+    public List<ProductoPOJO> findEverythingAPI() {
         List<ProductoPOJO> productosAPI = APIConsumer.productos("");
         List<ProductoPOJO> returnList = new ArrayList<>();
         for(ProductoPOJO producto: productosAPI){
@@ -69,7 +69,15 @@ public class ProductoFacadeREST extends AbstractFacade<Producto> {
     @Path("{from}/{to}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<ProductoPOJO> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
-        List<ProductoPOJO> returnList = APIConsumer.productos("/"+from.toString()+"/"+to.toString());
+        List<ProductoPOJO> productosAPI = APIConsumer.productos("/"+from.toString()+"/"+to.toString());
+        List<ProductoPOJO> returnList = new ArrayList<>();
+        for(ProductoPOJO producto: productosAPI){
+            Ganancia ganancia = new Ganancia();
+            ganancia.setPorcentaje((short)10);
+            producto.setGanancia(ganancia);
+            ProductoPOJO p = Common.aplicarGananciaAlProductoPOJO(producto);
+            returnList.add(p);
+        }
         return returnList;
     }
 
