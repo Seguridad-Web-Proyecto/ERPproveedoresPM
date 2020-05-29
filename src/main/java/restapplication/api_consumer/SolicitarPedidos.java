@@ -35,7 +35,7 @@ public class SolicitarPedidos {
                 ventadetalle.setCantidad(10);
                 detalles.add(ventadetalle);
             }
-            Ordenventa ordenventa = APIConsumer.generarPedidoCompleto("Realizando prueba de solicitud de productos", detalles);
+            Ordenventa ordenventa = APIConsumerProveedor.generarPedidoCompleto("Realizando prueba de solicitud de productos", detalles);
             System.out.println(ordenventa);
         } catch (Exception ex) {
             //ex.printStackTrace();
@@ -55,7 +55,7 @@ public class SolicitarPedidos {
             ventadetalleList.add(ventadetalle);
         }
         try {
-            APIConsumer.generarPedidoCompleto(description, ventadetalleList);
+            APIConsumerProveedor.generarPedidoCompleto(description, ventadetalleList);
         } catch (Exception ex) {
             Logger.getLogger(SolicitarPedidos.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -69,7 +69,7 @@ public class SolicitarPedidos {
         ordenventa.setDescripcion("Orden de venta realizada a las 7:23pm 19/05/2020");
         //agregarDetallesAlPedido(ordenventa, detalles);
         System.out.println("Realizando pedido...");
-        Response responseOrdenVenta = APIConsumer.realizarPedido(ordenventa);
+        Response responseOrdenVenta = APIConsumerProveedor.realizarPedido(ordenventa);
         System.out.println("Respuesta: "+responseOrdenVenta.getStatus());
         if(responseOrdenVenta.getStatus()!=200){
             return null;
@@ -91,7 +91,7 @@ public class SolicitarPedidos {
             ventadetalleList.add(ventadetalle);
         }
         ordenventa.setVentadetalleCollection(ventadetalleList);
-        Response responseDetalles = APIConsumer.agregarDetallesAlPedido(ordenventa);
+        Response responseDetalles = APIConsumerProveedor.agregarDetallesAlPedido(ordenventa);
         System.out.println("Respuesta: "+responseDetalles.getStatus());
         return responseDetalles;
     }

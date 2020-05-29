@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import javax.print.attribute.HashAttributeSet;
-import restapplication.api_consumer.APIConsumer;
+import restapplication.api_consumer.APIConsumerProveedor;
 import restapplication.pojos.InventarioPOJO;
 import restapplication.pojos.ProductoPOJO;
 
@@ -62,7 +62,7 @@ public class ProductoController1 implements Serializable
 
     public List<ProductoPOJO> getItemsWs()
     {
-        items = APIConsumer.productos("");
+        items = APIConsumerProveedor.productos("");
         return items;
     }
 
@@ -82,7 +82,7 @@ public class ProductoController1 implements Serializable
             ventadetalleList.add(ventadetalle);
         }
         try {
-            Ordenventa ordenventa = APIConsumer.generarPedidoCompleto("Solicitando pedido de frutas y verduras para el proveedor",
+            Ordenventa ordenventa = APIConsumerProveedor.generarPedidoCompleto("Solicitando pedido de frutas y verduras para el proveedor",
                     ventadetalleList);
             System.out.println("Pedido realizado exitosamente!");
         } catch (Exception ex) {

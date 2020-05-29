@@ -19,7 +19,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import restapplication.Common;
-import restapplication.api_consumer.APIConsumer;
+import restapplication.api_consumer.APIConsumerProveedor;
 import restapplication.api_consumer.ClienteHTTP;
 import restapplication.pojos.ProductoPOJO;
 
@@ -42,7 +42,7 @@ public class ProductoFacadeREST extends AbstractFacade<Producto> {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public ProductoPOJO findProductoAPI(@PathParam("id") Long id) {
-        ProductoPOJO productoPOJO = APIConsumer.obtenerProductoXId(id);
+        ProductoPOJO productoPOJO = APIConsumerProveedor.obtenerProductoXId(id);
         Ganancia ganancia = new Ganancia();
         ganancia.setPorcentaje((short)10);
         productoPOJO.setGanancia(ganancia);
@@ -53,7 +53,7 @@ public class ProductoFacadeREST extends AbstractFacade<Producto> {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<ProductoPOJO> findEverythingAPI() {
-        List<ProductoPOJO> productosAPI = APIConsumer.productos("");
+        List<ProductoPOJO> productosAPI = APIConsumerProveedor.productos("");
         List<ProductoPOJO> returnList = new ArrayList<>();
         for(ProductoPOJO producto: productosAPI){
             Ganancia ganancia = new Ganancia();
@@ -69,7 +69,7 @@ public class ProductoFacadeREST extends AbstractFacade<Producto> {
     @Path("{from}/{to}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<ProductoPOJO> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
-        List<ProductoPOJO> productosAPI = APIConsumer.productos("/"+from.toString()+"/"+to.toString());
+        List<ProductoPOJO> productosAPI = APIConsumerProveedor.productos("/"+from.toString()+"/"+to.toString());
         List<ProductoPOJO> returnList = new ArrayList<>();
         for(ProductoPOJO producto: productosAPI){
             Ganancia ganancia = new Ganancia();
@@ -85,7 +85,7 @@ public class ProductoFacadeREST extends AbstractFacade<Producto> {
     @Path("count")
     @Produces(MediaType.TEXT_PLAIN)
     public String countREST() {
-        return APIConsumer.productosCOUNT();
+        return APIConsumerProveedor.productosCOUNT();
     }
 
     @Override

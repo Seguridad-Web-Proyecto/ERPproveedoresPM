@@ -19,7 +19,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-import restapplication.api_consumer.APIConsumer;
+import restapplication.api_consumer.APIConsumerProveedor;
 
 @Named("productoController")
 @SessionScoped

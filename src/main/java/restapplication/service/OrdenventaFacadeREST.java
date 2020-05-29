@@ -17,6 +17,7 @@ import entidades.Proveedor;
 import entidades.Ventadetalle;
 import entidades.VentadetallePK;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -36,7 +37,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import restapplication.Common;
-import restapplication.api_consumer.APIConsumer;
+import restapplication.api_consumer.APIConsumerProveedor;
 
 /**
  *
@@ -122,8 +123,7 @@ public class OrdenventaFacadeREST extends AbstractFacade<Ordenventa> {
                     return Response.status(Status.BAD_REQUEST).build();
                 }
                 //PRODUCTO
-                Producto productoAPI = Common.convertirProductoPojoAProducto(
-                        APIConsumer.obtenerProductoXId(entity.getProducto().getProductoid()));
+                Producto productoAPI = Common.convertirProductoPojoAProducto(APIConsumerProveedor.obtenerProductoXId(entity.getProducto().getProductoid()));
                 if(productoAPI==null){
                     return Response.status(Status.NOT_FOUND).build();
                 }
@@ -172,10 +172,22 @@ public class OrdenventaFacadeREST extends AbstractFacade<Ordenventa> {
             ordenventa.setFacturaid(facturaCreada);*/
             
             // solicitar pedidos subproveedores
-            /*Ordenventa pedidoGenerado = 
-                    APIConsumer.generarPedidoCompleto("Pedido para proveedor", 
-                            (ArrayList<Ventadetalle>) ordenventaQuery.getVentadetalleCollection());
-            System.out.println(pedidoGenerado);*/
+            Collection<Ventadetalle> detalles = ordenventaQuery.getVentadetalleCollection();
+            final ArrayList<Ventadetalle> array = new ArrayList(detalles);
+            
+            final Runnable task = new Runnable(){
+                @Override
+                public void run() {
+                    try {
+                        Ordenventa pedidoGenerado =
+                                APIConsumerProveedor.generarPedidoCompleto("Pedido para de proveedor a subproveedor", array);
+                    } catch (Exception ex) {
+                        Logger.getLogger(OrdenventaFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            };
+            task.run();
+            
             return Response.ok(facturaventa).build();
         } catch (Exception ex) {
             Logger.getLogger(OrdenventaFacadeREST.class.getName()).log(Level.SEVERE, null, ex);

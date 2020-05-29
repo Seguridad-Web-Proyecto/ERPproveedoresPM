@@ -16,7 +16,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import restapplication.api_consumer.APIConsumer;
+import restapplication.api_consumer.APIConsumerProveedor;
 import restapplication.api_consumer.ClienteHTTP;
 
 /**
@@ -39,7 +39,7 @@ public class CategoriaFacadeREST extends AbstractFacade<Categoria> {
     @Produces(MediaType.APPLICATION_JSON)
     public Categoria find(@PathParam("id") Long id) {
         //return super.find(id);
-        Categoria categoria = APIConsumer.obtenerCategoriaXId(id);
+        Categoria categoria = APIConsumerProveedor.obtenerCategoriaXId(id);
         return categoria;
     }
 
@@ -48,7 +48,7 @@ public class CategoriaFacadeREST extends AbstractFacade<Categoria> {
     @Produces(MediaType.APPLICATION_JSON)
     public List<Categoria> findAll() {
         //return super.findAll();
-        List<Categoria> categorias = APIConsumer.categorias("");
+        List<Categoria> categorias = APIConsumerProveedor.categorias("");
         return categorias;
     }
 
@@ -56,7 +56,7 @@ public class CategoriaFacadeREST extends AbstractFacade<Categoria> {
     @Path("{from}/{to}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Categoria> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
-        List<Categoria> categorias = APIConsumer.categorias("/"+from.toString()+"/"+to.toString());
+        List<Categoria> categorias = APIConsumerProveedor.categorias("/"+from.toString()+"/"+to.toString());
         return categorias;
     }
 
@@ -64,7 +64,7 @@ public class CategoriaFacadeREST extends AbstractFacade<Categoria> {
     @Path("count")
     @Produces(MediaType.TEXT_PLAIN)
     public String countREST() {
-        return APIConsumer.categoriasCOUNT();
+        return APIConsumerProveedor.categoriasCOUNT();
     }
 
     @Override
