@@ -8,6 +8,7 @@ package restapplication.api_consumer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import entidades.Cliente;
+import entidades.Facturaventa;
 import entidades.Ordenventa;
 import entidades.Producto;
 import entidades.Ventadetalle;
@@ -24,9 +25,9 @@ import javax.ws.rs.core.Response;
 public class SolicitarPedidos {
 
     public static void main(String[] args) throws JsonProcessingException {
-        /*try {
+        try {
             ArrayList<Ventadetalle> detalles = new ArrayList<>();
-            for(long i=30; i<32; i++){
+            for(long i=40; i<42; i++){
                 Producto producto = new Producto();
                 producto.setProductoid(i);
                 Ventadetalle ventadetalle = new Ventadetalle();
@@ -34,12 +35,12 @@ public class SolicitarPedidos {
                 ventadetalle.setCantidad(10);
                 detalles.add(ventadetalle);
             }
-            APIConsumer.generarPedidoCompleto("Solicitando productos para walmart", detalles);
+            Ordenventa ordenventa = APIConsumer.generarPedidoCompleto("Solicitando productos para walmart", detalles);
+            System.out.println(ordenventa);
         } catch (Exception ex) {
             //ex.printStackTrace();
             Logger.getLogger(SolicitarPedidos.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
-        
+        }
     }
     
     public static void pruebaGenerarPedidoCompleto(){

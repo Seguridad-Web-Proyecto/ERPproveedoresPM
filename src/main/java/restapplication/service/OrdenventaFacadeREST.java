@@ -7,6 +7,7 @@ package restapplication.service;
 
 import dao.ClienteJpaController;
 import entidades.Cliente;
+import entidades.Facturaventa;
 import entidades.Ganancia;
 import entidades.Ordencompra;
 import entidades.Ordenventa;
@@ -17,6 +18,8 @@ import entidades.VentadetallePK;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -62,10 +65,7 @@ public class OrdenventaFacadeREST extends AbstractFacade<Ordenventa> {
    private beans.sessions.ProveedorFacade proveedorFacade;
    
    @EJB
-   private beans.sessions.OrdencompraFacade ordencompraFacade;
-   
-   @EJB
-   private beans.sessions.CompradetalleFacade compradetalleFacade;
+   private beans.sessions.FacturaventaFacade facturaVentaFacade;
 
     public OrdenventaFacadeREST() {
         super(Ordenventa.class);
@@ -94,22 +94,6 @@ public class OrdenventaFacadeREST extends AbstractFacade<Ordenventa> {
         return response;
     }
     
-    @POST
-    @Path("/solicitar")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response realizarPedido(Ordenventa entity){
-        Ordenventa ordenventa = super.find(entity.getOrdenventaid());
-        if(ordenventa==null){
-            return Response.status(Status.BAD_REQUEST).build();
-        }else{
-            ordenventa.setStatus("Pedido realizado!");
-            // solicitar pedidos subproveedores
-            guardarOrden(ordenventa);
-            return Response.ok().build();
-        }
-    }
-    
     @PUT
     @Path("/detalles")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -131,7 +115,6 @@ public class OrdenventaFacadeREST extends AbstractFacade<Ordenventa> {
             if(venta.getVentadetalleCollection()==null) return Response.status(Status.BAD_REQUEST).build();
             
             ArrayList<Ventadetalle> detalles = new ArrayList<>();
-            detalles.addAll(ordenventaQuery.getVentadetalleCollection());
             for(Ventadetalle entity: venta.getVentadetalleCollection()){
                 if(entity.getProducto()==null || 
                         entity.getProducto().getProductoid()==null){
@@ -168,6 +151,40 @@ public class OrdenventaFacadeREST extends AbstractFacade<Ordenventa> {
         }
     }
     
+    @POST
+    @Path("/solicitar")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response realizarPedido(Ordenventa entity){
+        try{
+            //Consultando que exista la orden, y haciendo una copia de la orden
+            Ordenventa ordenventaQuery = super.find(entity.getOrdenventaid());
+            if(ordenventaQuery==null) return Response.status(Status.BAD_REQUEST).build();
+            Ordenventa ordenventa = new Ordenventa(ordenventaQuery.getOrdenventaid(), ordenventaQuery.getFechaVenta(),
+                    ordenventaQuery.getStatus(), ordenventaQuery.getIva(), ordenventaQuery.getSubtotal(), 
+                    ordenventaQuery.getTotal(), ordenventaQuery.getDescripcion());
+            
+            //Modificando orden para editarla
+            ordenventa.setClienteid(ordenventaQuery.getClienteid());
+            ordenventa.setVentadetalleCollection((ArrayList<Ventadetalle>) ordenventaQuery.getVentadetalleCollection());
+            ordenventa.setStatus("Pedido realizado!");
+            //Creando factura de venta
+            Facturaventa facturaventa = WebServicesUtils.emitirFactura(ordenventaQuery);
+            /*Facturaventa facturaCreada = facturaVentaFacade.createEntity(facturaventa);
+            ordenventa.setFacturaid(facturaCreada);*/
+            super.edit(ordenventa); //editando orden
+            
+            // solicitar pedidos subproveedores
+            Ordenventa pedidoGenerado = 
+                    APIConsumer.generarPedidoCompleto("Pedido para proveedor", 
+                            (ArrayList<Ventadetalle>) ordenventa.getVentadetalleCollection());
+            System.out.println(pedidoGenerado);
+            return Response.ok(facturaventa).build();
+        } catch (Exception ex) {
+            Logger.getLogger(OrdenventaFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+            return Response.serverError().build();
+        }
+    }
     
     @GET
     @Path("{id}")

@@ -10,18 +10,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import entidades.Categoria;
 import entidades.Cliente;
-import entidades.Compradetalle;
-import entidades.Facturacompra;
 import entidades.Facturaventa;
-import entidades.Ordencompra;
 import entidades.Ordenventa;
-import entidades.Producto;
-import entidades.Proveedor;
 import entidades.Ventadetalle;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import javax.ws.rs.client.Client;
@@ -43,8 +36,8 @@ import restapplication.pojos.ProductoPOJO;
 @Stateless
 public class APIConsumer {
     
-    private static final String pathProductos = "http://localhost:8080/ERPsubproveedoresPM/webresources/productos";
-    private static final String pathCategorias = "http://localhost:8080/ERPsubproveedoresPM/webresources/categorias";
+    private static final String pathProductos = "https://ab36ca980a6f.ngrok.io/ERPsubproveedoresPM/webresources/productos";
+    private static final String pathCategorias = "https://ab36ca980a6f.ngrok.io/ERPsubproveedoresPM/webresources/categorias";
     
     private static final String USER_AGENT = "Mozilla/5.0";
      private static final String URL_BASE = "http://localhost:8080/ERPsubproveedoresPM/webresources";
