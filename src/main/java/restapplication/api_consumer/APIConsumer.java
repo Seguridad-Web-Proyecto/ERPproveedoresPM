@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
-import javax.ejb.Stateful;
 import javax.ejb.Stateless;
 
 import javax.ws.rs.client.Client;
@@ -54,6 +53,7 @@ public class APIConsumer {
     private static Invocation.Builder invocationBuilder;
     
     public static List<ProductoPOJO> productos(String path){
+        System.out.println("Solicitando productos. Proveedor -> Subproveedor");
         List<ProductoPOJO> productoList = new ArrayList<>();
         String url = pathProductos+path;
         String respuesta = "";
@@ -70,16 +70,16 @@ public class APIConsumer {
         return productoList;
     }
     
-    public static List<Producto> getProductos() throws JsonProcessingException{
-        System.out.println("Solicitando productos...");
+    public static List<ProductoPOJO> getProductos() throws JsonProcessingException{
+        System.out.println("Solicitando productos. Proveedor -> Subproveedor");
         clientHttp = ClientBuilder.newClient();
-        webTarget = clientHttp.target("https://41571ca69447.ngrok.io/ERPsubproveedoresPM/webresources").path("/productos");
+        webTarget = clientHttp.target(URL_BASE).path("/productos");
         invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
         Response response = invocationBuilder.get();
         System.out.println("Respuesta: "+response.getStatus());
-        List<Producto> productos = new ObjectMapper().
-                readValue(response.readEntity(String.class), new TypeReference<List<Producto>>(){});
-        return productos;
+        List<ProductoPOJO> productosPOJO = new ObjectMapper().
+                readValue(response.readEntity(String.class), new TypeReference<List<ProductoPOJO>>(){});
+        return productosPOJO;
     }
     
     public static ProductoPOJO obtenerProductoXId(Long productoid){
@@ -210,10 +210,10 @@ public class APIConsumer {
         return response;
     }
     
-    public static Facturaventa generarPedidoCompleto(String descripcion, ArrayList<Ventadetalle> ventaDetalleList) throws Exception{
+    public static Ordenventa generarPedidoCompleto(String descripcion, ArrayList<Ventadetalle> ventaDetalleList) throws Exception{
         Ordenventa ordenventa = new Ordenventa();
         Cliente cliente = new Cliente();
-        cliente.setEmail("compras@walmart.com.mx");
+        cliente.setEmail("proveedor@company.mx");
         ordenventa.setClienteid(cliente);
         ordenventa.setDescripcion(descripcion);
         ordenventa.setVentadetalleCollection(ventaDetalleList);
@@ -237,47 +237,9 @@ public class APIConsumer {
             throw new Exception("Whoops!!. Error al concluir el pedido!");
         }
         ordenVentaResult.setFacturaid(facturaVenta);
-        guardarOrdenCompra(ordenVentaResult);
-        return facturaVenta;
+        return ordenVentaResult;
     }
-   
-    @EJB
-    private static beans.sessions.CompradetalleFacade compradetalleFacade;
     
-    @EJB
-    private static beans.sessions.ProveedorFacade proveedorFacade;
     
-    @EJB
-    private static beans.sessions.ProductoFacade productoFacade;
-    
-    public static Ordencompra guardarOrdenCompra(Ordenventa ordenventa){
-        List<Proveedor> proveedorList = proveedorFacade.findAll();
-        Proveedor proveedor = proveedorFacade.find((long)1); // busca el proveedor 1 -> subproveedor@company.mx
-        assert(proveedor!=null);
-        
-        Ordencompra ordencompra = new Ordencompra();
-        ordencompra.setDescripcion("Realizando una compra al proveedor");
-        ordencompra.setStatus("Orden de compra realizada");
-        ordencompra.setFechaCompra(new Date());
-        ordencompra.setIva(ordenventa.getIva());
-        ordencompra.setSubtotal(ordenventa.getSubtotal());
-        ordencompra.setTotal(ordenventa.getTotal());
-        
-        ArrayList<Compradetalle> compraDetalles = new ArrayList<>();
-        for(Ventadetalle ventadetalle: ordenventa.getVentadetalleCollection()){
-            Compradetalle compradetalle = new Compradetalle();
-            compradetalle.setCantidad(ventadetalle.getCantidad());
-            compradetalle.setProducto(ventadetalle.getProducto());
-            compraDetalles.add(compradetalle);
-        }
-        
-        ordencompra.setCompradetalleCollection(compraDetalles);
-        Facturacompra facturacompra = new Facturacompra();
-        facturacompra.setDescripcion("Factura de la orden de compra emitidas al proveedor "+proveedor.getEmpresa());
-        facturacompra.setFechaEmision(ordenventa.getFacturaid().getFechaEmision());
-        facturacompra.setFechaVencimientoPago(ordenventa.getFacturaid().getFechaVencimientoPago());
-        ordencompra.setFacturaid(facturacompra);
-        return ordencompra;
-    }
     
 }

@@ -2,6 +2,7 @@ package jsf.clases;
 
 import entidades.Producto;
 import entidades.Facturaventa;
+import entidades.Ordenventa;
 import entidades.Ventadetalle;
 
 import java.io.Serializable;
@@ -81,7 +82,7 @@ public class ProductoController1 implements Serializable
             ventadetalleList.add(ventadetalle);
         }
         try {
-            Facturaventa facturaventa = APIConsumer.generarPedidoCompleto("Solicitando pedido de frutas y verduras para el proveedor",
+            Ordenventa ordenventa = APIConsumer.generarPedidoCompleto("Solicitando pedido de frutas y verduras para el proveedor",
                     ventadetalleList);
             System.out.println("Pedido realizado exitosamente!");
         } catch (Exception ex) {

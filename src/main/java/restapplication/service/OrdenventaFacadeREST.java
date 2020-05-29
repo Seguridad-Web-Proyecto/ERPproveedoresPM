@@ -8,8 +8,10 @@ package restapplication.service;
 import dao.ClienteJpaController;
 import entidades.Cliente;
 import entidades.Ganancia;
+import entidades.Ordencompra;
 import entidades.Ordenventa;
 import entidades.Producto;
+import entidades.Proveedor;
 import entidades.Ventadetalle;
 import entidades.VentadetallePK;
 import java.util.ArrayList;
@@ -55,6 +57,15 @@ public class OrdenventaFacadeREST extends AbstractFacade<Ordenventa> {
     
     @EJB
     private beans.sessions.GananciaFacade gananciaFacade;
+    
+   @EJB
+   private beans.sessions.ProveedorFacade proveedorFacade;
+   
+   @EJB
+   private beans.sessions.OrdencompraFacade ordencompraFacade;
+   
+   @EJB
+   private beans.sessions.CompradetalleFacade compradetalleFacade;
 
     public OrdenventaFacadeREST() {
         super(Ordenventa.class);
@@ -94,6 +105,7 @@ public class OrdenventaFacadeREST extends AbstractFacade<Ordenventa> {
         }else{
             ordenventa.setStatus("Pedido realizado!");
             // solicitar pedidos subproveedores
+            guardarOrden(ordenventa);
             return Response.ok().build();
         }
     }
@@ -131,12 +143,7 @@ public class OrdenventaFacadeREST extends AbstractFacade<Ordenventa> {
                 if(productoAPI==null){
                     return Response.status(Status.NOT_FOUND).build();
                 }
-                Producto productoIngresado = productoFacade.createEntity(productoAPI);
-                Ganancia ganancia = new Ganancia();
-                ganancia.setPorcentaje((short)20);
-                ganancia.setProductoid(productoIngresado);
-                Ganancia gananciaIngresada = gananciaFacade.createEntity(ganancia);
-                productoIngresado.setGanancia(gananciaIngresada);
+                Producto productoIngresado = ingresarOBuscarProducto(productoAPI);
                 Producto p = Common.aplicarGananciaAlProducto(productoIngresado);
                 //VENTA DETALLE
                 entity.setPrecioUnitario(p.getPrecioUnitario());
@@ -164,7 +171,6 @@ public class OrdenventaFacadeREST extends AbstractFacade<Ordenventa> {
     
     @GET
     @Path("{id}")
-    //@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces(MediaType.APPLICATION_JSON)
     public Ordenventa find(@PathParam("id") Long id) {
         return Common.limpiarOrdenVenta(super.find(id));
@@ -172,7 +178,6 @@ public class OrdenventaFacadeREST extends AbstractFacade<Ordenventa> {
 
     @GET
     @Override
-    //@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces(MediaType.APPLICATION_JSON)
     public List<Ordenventa> findAll() {
         List<Ordenventa> ordenes = super.findAll();
@@ -185,7 +190,6 @@ public class OrdenventaFacadeREST extends AbstractFacade<Ordenventa> {
 
     @GET
     @Path("{from}/{to}")
-    //@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces(MediaType.APPLICATION_JSON)
     public List<Ordenventa> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
         List<Ordenventa> ordenes = super.findRange(new int[]{from, to});
@@ -206,6 +210,28 @@ public class OrdenventaFacadeREST extends AbstractFacade<Ordenventa> {
     @Override
     protected EntityManager getEntityManager() {
         return em;
+    }
+    
+    private void guardarOrden(Ordenventa ordenventa){
+        Ordencompra ordencompra = Common.convertirOrdenCompraAVenta(ordenventa);
+        Proveedor proveedor = proveedorFacade.find((long)1);
+    }
+    
+    private Producto ingresarOBuscarProducto(Producto producto){
+        try{
+            Producto productoIngresado = productoFacade.find(producto.getProductoid());
+            if(productoIngresado==null){
+                productoIngresado = productoFacade.createEntity(producto);
+                Ganancia ganancia = new Ganancia();
+                ganancia.setPorcentaje((short)10);
+                ganancia.setProductoid(productoIngresado);
+                Ganancia gananciaIngresada = gananciaFacade.createEntity(ganancia);
+                productoIngresado.setGanancia(gananciaIngresada);
+            }
+            return productoIngresado;
+        }catch(Exception ex){
+        }
+        return null;
     }
     
 }

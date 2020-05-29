@@ -5,16 +5,20 @@
  */
 package restapplication;
 
+import entidades.Compradetalle;
 import entidades.Facturacompra;
 import entidades.Facturaventa;
+import entidades.Ordencompra;
 import entidades.Ordenventa;
 import entidades.Pagoventa;
 import entidades.Producto;
+import entidades.Proveedor;
 import entidades.Tarjetacreditoventa;
 import entidades.Ventadetalle;
 import entidades.VentadetallePK;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import restapplication.pojos.ProductoPOJO;
 
@@ -110,6 +114,34 @@ public class Common {
             producto.setGanancia(productoPOJO.getGanancia());
         }
         return producto;
+    }
+    
+    public static Ordencompra convertirOrdenCompraAVenta(Ordenventa ordenventa){
+        Proveedor proveedor = new Proveedor((long)1); // busca el proveedor 1 -> subproveedor@company.mx
+       
+        Ordencompra ordencompra = new Ordencompra();
+        ordencompra.setDescripcion("Realizando una compra al proveedor");
+        ordencompra.setStatus("Orden de compra realizada");
+        ordencompra.setFechaCompra(new Date());
+        ordencompra.setIva(ordenventa.getIva());
+        ordencompra.setSubtotal(ordenventa.getSubtotal());
+        ordencompra.setTotal(ordenventa.getTotal());
+        
+        ArrayList<Compradetalle> compraDetalles = new ArrayList<>();
+        for(Ventadetalle ventadetalle: ordenventa.getVentadetalleCollection()){
+            Compradetalle compradetalle = new Compradetalle();
+            compradetalle.setCantidad(ventadetalle.getCantidad());
+            compradetalle.setProducto(ventadetalle.getProducto());
+            compraDetalles.add(compradetalle);
+        }
+        
+        ordencompra.setCompradetalleCollection(compraDetalles);
+        Facturacompra facturacompra = new Facturacompra();
+        facturacompra.setDescripcion("Factura de la orden de compra emitidas al proveedor "+proveedor.getEmpresa());
+        facturacompra.setFechaEmision(ordenventa.getFacturaid().getFechaEmision());
+        facturacompra.setFechaVencimientoPago(ordenventa.getFacturaid().getFechaVencimientoPago());
+        ordencompra.setFacturaid(facturacompra);
+        return ordencompra;
     }
     
 }

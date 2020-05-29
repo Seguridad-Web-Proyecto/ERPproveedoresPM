@@ -39,7 +39,7 @@ public class SolicitarPedidos {
             //ex.printStackTrace();
             Logger.getLogger(SolicitarPedidos.class.getName()).log(Level.SEVERE, null, ex);
         }*/
-        APIConsumer.guardarOrdenCompra(new Ordenventa());
+        
     }
     
     public static void pruebaGenerarPedidoCompleto(){
