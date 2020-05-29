@@ -35,7 +35,7 @@ public class SolicitarPedidos {
                 ventadetalle.setCantidad(10);
                 detalles.add(ventadetalle);
             }
-            Ordenventa ordenventa = APIConsumer.generarPedidoCompleto("Solicitando productos para walmart", detalles);
+            Ordenventa ordenventa = APIConsumer.generarPedidoCompleto("Realizando prueba de solicitud de productos", detalles);
             System.out.println(ordenventa);
         } catch (Exception ex) {
             //ex.printStackTrace();

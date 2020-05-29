@@ -29,4 +29,10 @@ public class CategoriaFacade extends AbstractFacade<Categoria> {
         super(Categoria.class);
     }
     
+    public Categoria createEntity(Categoria categoria){
+        getEntityManager().persist(categoria);
+        getEntityManager().flush();
+        return categoria;
+    }
+    
 }

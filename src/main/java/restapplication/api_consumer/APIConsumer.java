@@ -36,8 +36,8 @@ import restapplication.pojos.ProductoPOJO;
 @Stateless
 public class APIConsumer {
     
-    private static final String pathProductos = "https://ab36ca980a6f.ngrok.io/ERPsubproveedoresPM/webresources/productos";
-    private static final String pathCategorias = "https://ab36ca980a6f.ngrok.io/ERPsubproveedoresPM/webresources/categorias";
+    private static final String pathProductos = "http://localhost:8080/ERPsubproveedoresPM/webresources/productos";
+    private static final String pathCategorias = "http://localhost:8080/ERPsubproveedoresPM/webresources/categorias";
     
     private static final String USER_AGENT = "Mozilla/5.0";
      private static final String URL_BASE = "http://localhost:8080/ERPsubproveedoresPM/webresources";

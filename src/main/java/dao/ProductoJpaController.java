@@ -76,6 +76,7 @@ public class ProductoJpaController implements Serializable {
             }
             producto.setVentadetalleCollection(attachedVentadetalleCollection);
             em.persist(producto);
+            em.flush();
             if (categoriaid != null) {
                 categoriaid.getProductoCollection().add(producto);
                 categoriaid = em.merge(categoriaid);
@@ -347,6 +348,80 @@ public class ProductoJpaController implements Serializable {
             return ((Long) q.getSingleResult()).intValue();
         } finally {
             em.close();
+        }
+    }
+    
+    public void createEntity(Producto producto) throws Exception {
+        if (producto.getCompradetalleCollection() == null) {
+            producto.setCompradetalleCollection(new ArrayList<Compradetalle>());
+        }
+        if (producto.getVentadetalleCollection() == null) {
+            producto.setVentadetalleCollection(new ArrayList<Ventadetalle>());
+        }
+        EntityManager em = null;
+        try{
+            em = getEntityManager();
+            Categoria categoriaid = producto.getCategoriaid();
+            if (categoriaid != null) {
+                categoriaid = em.getReference(categoriaid.getClass(), categoriaid.getCategoriaid());
+                producto.setCategoriaid(categoriaid);
+            }
+            Ganancia ganancia = producto.getGanancia();
+            if (ganancia != null) {
+                ganancia = em.getReference(ganancia.getClass(), ganancia.getGananciaid());
+                producto.setGanancia(ganancia);
+            }
+            Collection<Compradetalle> attachedCompradetalleCollection = new ArrayList<Compradetalle>();
+            for (Compradetalle compradetalleCollectionCompradetalleToAttach : producto.getCompradetalleCollection()) {
+                compradetalleCollectionCompradetalleToAttach = em.getReference(compradetalleCollectionCompradetalleToAttach.getClass(), compradetalleCollectionCompradetalleToAttach.getCompradetallePK());
+                attachedCompradetalleCollection.add(compradetalleCollectionCompradetalleToAttach);
+            }
+            producto.setCompradetalleCollection(attachedCompradetalleCollection);
+            Collection<Ventadetalle> attachedVentadetalleCollection = new ArrayList<Ventadetalle>();
+            for (Ventadetalle ventadetalleCollectionVentadetalleToAttach : producto.getVentadetalleCollection()) {
+                ventadetalleCollectionVentadetalleToAttach = em.getReference(ventadetalleCollectionVentadetalleToAttach.getClass(), ventadetalleCollectionVentadetalleToAttach.getVentadetallePK());
+                attachedVentadetalleCollection.add(ventadetalleCollectionVentadetalleToAttach);
+            }
+            producto.setVentadetalleCollection(attachedVentadetalleCollection);
+            em.persist(producto);
+            em.flush();
+            if (categoriaid != null) {
+                categoriaid.getProductoCollection().add(producto);
+                categoriaid = em.merge(categoriaid);
+            }
+            if (ganancia != null) {
+                Producto oldProductoidOfGanancia = ganancia.getProductoid();
+                if (oldProductoidOfGanancia != null) {
+                    oldProductoidOfGanancia.setGanancia(null);
+                    oldProductoidOfGanancia = em.merge(oldProductoidOfGanancia);
+                }
+                ganancia.setProductoid(producto);
+                ganancia = em.merge(ganancia);
+            }
+            for (Compradetalle compradetalleCollectionCompradetalle : producto.getCompradetalleCollection()) {
+                Producto oldProductoOfCompradetalleCollectionCompradetalle = compradetalleCollectionCompradetalle.getProducto();
+                compradetalleCollectionCompradetalle.setProducto(producto);
+                compradetalleCollectionCompradetalle = em.merge(compradetalleCollectionCompradetalle);
+                if (oldProductoOfCompradetalleCollectionCompradetalle != null) {
+                    oldProductoOfCompradetalleCollectionCompradetalle.getCompradetalleCollection().remove(compradetalleCollectionCompradetalle);
+                    oldProductoOfCompradetalleCollectionCompradetalle = em.merge(oldProductoOfCompradetalleCollectionCompradetalle);
+                }
+            }
+            for (Ventadetalle ventadetalleCollectionVentadetalle : producto.getVentadetalleCollection()) {
+                Producto oldProductoOfVentadetalleCollectionVentadetalle = ventadetalleCollectionVentadetalle.getProducto();
+                ventadetalleCollectionVentadetalle.setProducto(producto);
+                ventadetalleCollectionVentadetalle = em.merge(ventadetalleCollectionVentadetalle);
+                if (oldProductoOfVentadetalleCollectionVentadetalle != null) {
+                    oldProductoOfVentadetalleCollectionVentadetalle.getVentadetalleCollection().remove(ventadetalleCollectionVentadetalle);
+                    oldProductoOfVentadetalleCollectionVentadetalle = em.merge(oldProductoOfVentadetalleCollectionVentadetalle);
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
         }
     }
     

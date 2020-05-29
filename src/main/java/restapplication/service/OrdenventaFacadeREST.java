@@ -6,6 +6,7 @@
 package restapplication.service;
 
 import dao.ClienteJpaController;
+import entidades.Categoria;
 import entidades.Cliente;
 import entidades.Facturaventa;
 import entidades.Ganancia;
@@ -109,7 +110,7 @@ public class OrdenventaFacadeREST extends AbstractFacade<Ordenventa> {
             }
             Ordenventa ordenventa = new Ordenventa(ordenventaQuery.getOrdenventaid(), ordenventaQuery.getFechaVenta(),
                     ordenventaQuery.getStatus(), ordenventaQuery.getIva(), ordenventaQuery.getSubtotal(), 
-                    ordenventaQuery.getTotal(), ordenventaQuery.getStatus());
+                    ordenventaQuery.getTotal(), ordenventaQuery.getDescripcion());
             ordenventa.setClienteid(ordenventaQuery.getClienteid());
                        
             if(venta.getVentadetalleCollection()==null) return Response.status(Status.BAD_REQUEST).build();
@@ -160,26 +161,21 @@ public class OrdenventaFacadeREST extends AbstractFacade<Ordenventa> {
         try{
             //Consultando que exista la orden, y haciendo una copia de la orden
             Ordenventa ordenventaQuery = super.find(entity.getOrdenventaid());
-            if(ordenventaQuery==null) return Response.status(Status.BAD_REQUEST).build();
-            Ordenventa ordenventa = new Ordenventa(ordenventaQuery.getOrdenventaid(), ordenventaQuery.getFechaVenta(),
-                    ordenventaQuery.getStatus(), ordenventaQuery.getIva(), ordenventaQuery.getSubtotal(), 
-                    ordenventaQuery.getTotal(), ordenventaQuery.getDescripcion());
+            if(ordenventaQuery==null){
+                return Response.status(Status.BAD_REQUEST).build();
+            }
             
-            //Modificando orden para editarla
-            ordenventa.setClienteid(ordenventaQuery.getClienteid());
-            ordenventa.setVentadetalleCollection((ArrayList<Ventadetalle>) ordenventaQuery.getVentadetalleCollection());
-            ordenventa.setStatus("Pedido realizado!");
+            ordenventaQuery.setStatus("Pedido realizado!");
             //Creando factura de venta
             Facturaventa facturaventa = WebServicesUtils.emitirFactura(ordenventaQuery);
             /*Facturaventa facturaCreada = facturaVentaFacade.createEntity(facturaventa);
             ordenventa.setFacturaid(facturaCreada);*/
-            super.edit(ordenventa); //editando orden
             
             // solicitar pedidos subproveedores
-            Ordenventa pedidoGenerado = 
+            /*Ordenventa pedidoGenerado = 
                     APIConsumer.generarPedidoCompleto("Pedido para proveedor", 
-                            (ArrayList<Ventadetalle>) ordenventa.getVentadetalleCollection());
-            System.out.println(pedidoGenerado);
+                            (ArrayList<Ventadetalle>) ordenventaQuery.getVentadetalleCollection());
+            System.out.println(pedidoGenerado);*/
             return Response.ok(facturaventa).build();
         } catch (Exception ex) {
             Logger.getLogger(OrdenventaFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
@@ -239,17 +235,42 @@ public class OrdenventaFacadeREST extends AbstractFacade<Ordenventa> {
         try{
             Producto productoIngresado = productoFacade.find(producto.getProductoid());
             if(productoIngresado==null){
-                productoIngresado = productoFacade.createEntity(producto);
+                producto.setGanancia(null);
+                producto.setVentadetalleCollection(null);
+                producto.setCompradetalleCollection(null);
+                Categoria categoria = ingresarOBuscarCategoria(producto.getCategoriaid());
+                producto.setCategoriaid(categoria);
+                Producto productoP = productoFacade.createEntity(producto);
                 Ganancia ganancia = new Ganancia();
                 ganancia.setPorcentaje((short)10);
-                ganancia.setProductoid(productoIngresado);
+                ganancia.setProductoid(productoP);
                 Ganancia gananciaIngresada = gananciaFacade.createEntity(ganancia);
-                productoIngresado.setGanancia(gananciaIngresada);
+                productoP.setGanancia(gananciaIngresada);
+                return productoP;
             }
             return productoIngresado;
         }catch(Exception ex){
+            ex.printStackTrace();
         }
         return null;
+    }
+    
+    @EJB
+    private beans.sessions.CategoriaFacade categoriaFacade;
+    
+    private Categoria ingresarOBuscarCategoria(Categoria categoria){
+        try{
+            if(categoria==null) return null;
+            Categoria categoriaIngresada = categoriaFacade.find(categoria.getCategoriaid());
+            if(categoriaIngresada==null){
+                Categoria c = categoriaFacade.createEntity(categoria);
+                return c;
+            }
+            return categoriaIngresada;
+        }catch(Exception ex){
+            ex.printStackTrace();
+            return null;
+        }
     }
     
 }
