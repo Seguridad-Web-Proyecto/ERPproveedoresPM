@@ -190,57 +190,76 @@ public class APIConsumerProveedor {
         return responseString;
     }
     
-    public static Response agregarDetallesAlPedido(Ordenventa ordenventa){
+    public static Object agregarDetallesAlPedido(Ordenventa ordenventa) throws JsonProcessingException{
         System.out.println("Proveedores -> Subproveedores. Agregando detalles al pedido");
         if(ordenventa.getVentadetalleCollection()==null) return null;
-        clientHttp = ClientBuilder.newClient();
-        webTarget = clientHttp.target(URL_BASE).path("/pedidos/detalles");
-        invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
-        Response response = invocationBuilder.put(Entity.entity(ordenventa, 
-                MediaType.APPLICATION_JSON));
-        System.out.println("Respuesta: "+response.getStatus());
-        return response;
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonOrdenVenta = mapper.writeValueAsString(ordenventa);
+        String responseString = "";
+        try {
+            System.out.println(jsonOrdenVenta);
+            Ordenventa pruebaOrden = mapper.readValue(jsonOrdenVenta, new TypeReference<Ordenventa>(){});
+            responseString = ClienteHTTP.httpPUT(URL_BASE+"/pedidos/detalles", jsonOrdenVenta);
+            return responseString;
+        } catch (Exception ex) {
+            Logger.getLogger(APIConsumerProveedor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return responseString;
     }
     
-    public static Response concluirPedido(Ordenventa ordenventa){
+    public static Object concluirPedido(Ordenventa ordenventa) throws JsonProcessingException{
         System.out.println("Proveedores -> Subproveedores. Solicitando el pedido...");
-        clientHttp = ClientBuilder.newClient();
-        webTarget = clientHttp.target(URL_BASE).path("/pedidos/solicitar");
-        invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
-        Response response = invocationBuilder.post(Entity.entity(ordenventa, MediaType.APPLICATION_JSON));
-        System.out.println("Respuesta: "+response.getStatus());
-        return response;
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonOrdenVenta = mapper.writeValueAsString(ordenventa);
+        String responseString = "";
+        try {
+            System.out.println(jsonOrdenVenta);
+            Ordenventa pruebaOrden = mapper.readValue(jsonOrdenVenta, new TypeReference<Ordenventa>(){});
+            responseString = ClienteHTTP.httpPOST(URL_BASE+"/pedidos/solicitar", jsonOrdenVenta);
+            Facturaventa facturaventaResult = mapper.readValue(responseString, new TypeReference<Facturaventa>(){});
+            return facturaventaResult;
+        } catch (Exception ex) {
+            Logger.getLogger(APIConsumerProveedor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return responseString;
     }
     
     public static Ordenventa generarPedidoCompleto(String descripcion, ArrayList<Ventadetalle> ventaDetalleList) throws Exception{
+        //CONSTRUYO EL OBJETO DE ORDEN DE VENTA
         Ordenventa ordenventa = new Ordenventa();
         Cliente cliente = new Cliente();
         cliente.setEmail("proveedor@company.mx");
         ordenventa.setClienteid(cliente);
         ordenventa.setDescripcion(descripcion);
         ordenventa.setVentadetalleCollection(ventaDetalleList);
+        //ENVIANDO ORDEN DE VENTA
+        String msg; //String response
+        
         Object responseOrdenVenta = APIConsumerProveedor.realizarPedido(ordenventa);
         Ordenventa ordenVentaResult;
         try{
             ordenVentaResult = (Ordenventa) responseOrdenVenta;
-        }catch(Exception ex){
-            String msg = String.valueOf(responseOrdenVenta);
+        }catch(Exception ex){ //si no puede castear el objeto es un error que arrojó
+            msg = String.valueOf(responseOrdenVenta);
             throw new Exception("Whoops!!. Error al realizar un pedido!\n"+msg);
         }
         // DETALLES
         ordenVentaResult.setVentadetalleCollection(ventaDetalleList);
-        Response responseDetalles = APIConsumerProveedor.agregarDetallesAlPedido(ordenVentaResult);
-        if(responseDetalles.getStatus()!=200){
-            String msg = responseDetalles.readEntity(String.class);
+        Object responseDetalles = APIConsumerProveedor.agregarDetallesAlPedido(ordenVentaResult);
+        msg = String.valueOf(responseDetalles);
+        if(!msg.equals("OK")){
             throw new Exception("Whoops!!. Error al añadir los detalles al pedido!\n"+msg); 
         }
         // CONLUYENDO PEDIDO Y RECIBIENDO LA FACTURA
-        Response responseCompletarPedido = APIConsumerProveedor.concluirPedido(ordenVentaResult);
-        Facturaventa facturaVenta = responseCompletarPedido.readEntity(Facturaventa.class);
-        if(responseCompletarPedido.getStatus()!=200){
+        Object responseCompletarPedido = APIConsumerProveedor.concluirPedido(ordenVentaResult);
+        Facturaventa facturaventa = null;
+        try{
+            facturaventa = (Facturaventa) responseCompletarPedido;
+        }catch(Exception ex){
+            msg = String.valueOf(responseCompletarPedido);
             throw new Exception("Whoops!!. Error al concluir el pedido!");
         }
-        ordenVentaResult.setFacturaid(facturaVenta);
+        ordenVentaResult.setFacturaid(facturaventa);
         return ordenVentaResult;
     }
     

@@ -100,9 +100,9 @@ public class SolicitarPedidos {
             ventadetalleList.add(ventadetalle);
         }
         ordenventa.setVentadetalleCollection(ventadetalleList);
-        Response responseDetalles = APIConsumerProveedor.agregarDetallesAlPedido(ordenventa);
-        System.out.println("Respuesta: "+responseDetalles.getStatus());
-        return responseDetalles;
+        /*Response responseDetalles = APIConsumerProveedor.agregarDetallesAlPedido(ordenventa);
+        System.out.println("Respuesta: "+responseDetalles.getStatus());*/
+        return null;
     }
     
 }

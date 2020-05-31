@@ -146,7 +146,7 @@ public class OrdenventaFacadeREST extends AbstractFacade<Ordenventa> {
             }
             ordenventa.setVentadetalleCollection(detalles);
             super.edit(ordenventa);
-            return Response.ok().build();
+            return Response.ok(ordenventa).build();
         }catch(Exception ex){
             ex.printStackTrace();
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
