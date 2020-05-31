@@ -227,8 +227,8 @@
       <web-resource-name>Public Area</web-resource-name>
       <url-pattern>/resources</url-pattern>
       <url-pattern>/</url-pattern>
+      <url-pattern>/webresources</url-pattern>
     </web-resource-collection>
   </security-constraint>
-    
     
 </web-app>

@@ -6,9 +6,12 @@
 package restapplication.api_consumer;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -35,30 +38,56 @@ public class ClienteHTTP {
         // Cerrar el BufferedReader
         rd.close();
         // Regresar resultado, pero como cadena, no como StringBuilder
-        
         return resultado.toString();
     }
     
-    public  static String httpPOST(String url, String jsonInputString) throws Exception{
+    public  static String httpPOST(String url, String jsonInputString) throws Exception, MalformedURLException, MalformedURLException, IOException, MalformedURLException{
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         //Set the Request Method
         con.setRequestMethod("POST");
         //Set the Request Content-Type Header Parameter
-        con.setRequestProperty("Content-Type", "application/json; utf-8");
+        con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
         //Set Response Format Type
         con.setRequestProperty("Accept", "application/json");
         //Ensure the Connection Will Be Used to Send Content
         con.setDoOutput(true);
+        con.setDoInput(true);
         // Create the Request Body
-        try(OutputStream os = con.getOutputStream()) {
-            byte[] input = jsonInputString.getBytes("utf-8");
-            os.write(input, 0, input.length);           
-        }
+        OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
+        wr.write(jsonInputString);
+        wr.flush();
         // Read the Response from Input Stream
         StringBuilder response = new StringBuilder();
         try(BufferedReader br = new BufferedReader(
-            new InputStreamReader(con.getInputStream(), "utf-8"))) {
+            new InputStreamReader(con.getInputStream(), "UTF-8"))) {
+            String responseLine = null;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine.trim());
+            }
+            System.out.println(response.toString());
+        }
+        return response.toString();
+    }
+    
+    public  static String httpPOSTV2(String url, String jsonInputString) throws MalformedURLException, IOException{
+        URL object= new URL(url);
+        HttpURLConnection con = (HttpURLConnection) object.openConnection();
+        con.setDoOutput(true);
+        con.setDoInput(true);
+        con.setRequestProperty("Content-Type", "application/json");
+        con.setRequestProperty("Accept", "application/json");
+        con.setRequestMethod("POST");
+        
+        OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
+        wr.write(jsonInputString);
+        
+        con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+        con.setRequestProperty("Accept", "application/json");
+        
+        StringBuilder response = new StringBuilder();
+        try(BufferedReader br = new BufferedReader(
+            new InputStreamReader(con.getInputStream(), "UTF-8"))) {
             String responseLine = null;
             while ((responseLine = br.readLine()) != null) {
                 response.append(responseLine.trim());

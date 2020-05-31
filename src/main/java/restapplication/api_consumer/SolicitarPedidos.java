@@ -35,12 +35,20 @@ public class SolicitarPedidos {
                 ventadetalle.setCantidad(10);
                 detalles.add(ventadetalle);
             }
+            /*Ordenventa ordenventa = new Ordenventa();
+            ordenventa.setVentadetalleCollection(detalles);
+            Cliente cliente = new Cliente();
+            cliente.setEmail("supermercado@company.mx");
+            ordenventa.setClienteid(cliente);
+            ordenventa.setDescripcion("prueba");
+            System.out.println(ClassToJson.ordenVentaToJson(ordenventa));*/
             Ordenventa ordenventa = APIConsumerProveedor.generarPedidoCompleto("Realizando prueba de solicitud de productos", detalles);
             System.out.println(ordenventa);
         } catch (Exception ex) {
             //ex.printStackTrace();
             Logger.getLogger(SolicitarPedidos.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
     }
     
     public static void pruebaGenerarPedidoCompleto(){
@@ -69,13 +77,14 @@ public class SolicitarPedidos {
         ordenventa.setDescripcion("Orden de venta realizada a las 7:23pm 19/05/2020");
         //agregarDetallesAlPedido(ordenventa, detalles);
         System.out.println("Realizando pedido...");
-        Response responseOrdenVenta = APIConsumerProveedor.realizarPedido(ordenventa);
+        /*Response responseOrdenVenta = APIConsumerProveedor.realizarPedido(ordenventa);
         System.out.println("Respuesta: "+responseOrdenVenta.getStatus());
         if(responseOrdenVenta.getStatus()!=200){
             return null;
         }
         Ordenventa entityResult = responseOrdenVenta.readEntity(Ordenventa.class);
-        return entityResult;
+        return entityResult;*/
+        return null;
     }
     
     public static Response pruebaAgregarDetallesAlPedido(Ordenventa ordenventa){

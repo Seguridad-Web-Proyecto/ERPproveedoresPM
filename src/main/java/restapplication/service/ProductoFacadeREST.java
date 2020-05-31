@@ -5,6 +5,7 @@
  */
 package restapplication.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import entidades.Ganancia;
 import restapplication.service.AbstractFacade;
 import entidades.Producto;
@@ -52,7 +53,7 @@ public class ProductoFacadeREST extends AbstractFacade<Producto> {
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ProductoPOJO> findEverythingAPI() {
+    public List<ProductoPOJO> findEverythingAPI() throws JsonProcessingException {
         List<ProductoPOJO> productosAPI = APIConsumerProveedor.productos("");
         List<ProductoPOJO> returnList = new ArrayList<>();
         for(ProductoPOJO producto: productosAPI){

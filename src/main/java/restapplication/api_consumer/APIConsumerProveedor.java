@@ -15,6 +15,8 @@ import entidades.Ordenventa;
 import entidades.Ventadetalle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 
 import javax.ws.rs.client.Client;
@@ -25,6 +27,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.Response.Status;
 
 import static restapplication.api_consumer.ClienteHTTP.peticionHttpGet;
 import restapplication.pojos.ProductoPOJO;
@@ -170,15 +173,21 @@ public class APIConsumerProveedor {
         return respuesta;
     }
     
-    public static Response realizarPedido(Ordenventa ordenventa){
-        System.out.println("Proveedores -> Subproveedores. Realizando pedido a subproveedores...");
-        clientHttp = ClientBuilder.newClient();
-        webTarget = clientHttp.target(URL_BASE).path("/pedidos");
-        invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
-        Response response = invocationBuilder.post(
-                Entity.entity(ordenventa, MediaType.APPLICATION_JSON));
-        System.out.println("Respuesta: "+response.getStatus());
-        return response;
+    public static Object realizarPedido(Ordenventa ordenventa){
+        String jsonOrdenVenta = ClassToJson.ordenVentaToJson(ordenventa);
+        String responseString = "";
+        try {
+            System.out.println(jsonOrdenVenta);
+            ObjectMapper mapper = new ObjectMapper();
+            Ordenventa pruebaOrden = mapper.readValue(jsonOrdenVenta, new TypeReference<Ordenventa>(){});
+            
+            responseString = ClienteHTTP.httpPOST(URL_BASE+"/pedidos", jsonOrdenVenta);
+            Ordenventa ordenventaResult = mapper.readValue(responseString, new TypeReference<Ordenventa>(){});
+            return ordenventaResult;
+        } catch (Exception ex) {
+            Logger.getLogger(APIConsumerProveedor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return responseString;
     }
     
     public static Response agregarDetallesAlPedido(Ordenventa ordenventa){
@@ -210,13 +219,15 @@ public class APIConsumerProveedor {
         ordenventa.setClienteid(cliente);
         ordenventa.setDescripcion(descripcion);
         ordenventa.setVentadetalleCollection(ventaDetalleList);
-        Response responseOrdenVenta = APIConsumerProveedor.realizarPedido(ordenventa);
-        if(responseOrdenVenta.getStatus()!=200){
-            String msg = responseOrdenVenta.readEntity(String.class);
+        Object responseOrdenVenta = APIConsumerProveedor.realizarPedido(ordenventa);
+        Ordenventa ordenVentaResult;
+        try{
+            ordenVentaResult = (Ordenventa) responseOrdenVenta;
+        }catch(Exception ex){
+            String msg = String.valueOf(responseOrdenVenta);
             throw new Exception("Whoops!!. Error al realizar un pedido!\n"+msg);
         }
         // DETALLES
-        Ordenventa ordenVentaResult = responseOrdenVenta.readEntity(Ordenventa.class);
         ordenVentaResult.setVentadetalleCollection(ventaDetalleList);
         Response responseDetalles = APIConsumerProveedor.agregarDetallesAlPedido(ordenVentaResult);
         if(responseDetalles.getStatus()!=200){
