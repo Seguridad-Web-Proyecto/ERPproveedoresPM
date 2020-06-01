@@ -24,8 +24,8 @@
                                  rowsPerPageTemplate="10,20,30,40,50"
                                  >
 
-                        <p:ajax event="rowSelect"   update="createButton viewButton editButton deleteButton"/>
-                        <p:ajax event="rowUnselect" update="createButton viewButton editButton deleteButton"/>
+                        <p:ajax event="rowSelect"  />
+                        <p:ajax event="rowUnselect" />
 
                         <p:column>
                             <f:facet name="header">
@@ -75,19 +75,10 @@
                             <f:facet name="header">
                                 <h:outputText value="Cliente Asociado"/>
                             </f:facet>
-                            <h:outputText value="#{item.clienteid}"/>
+                            <h:outputText value="#{item.clienteid.email}"/>
                         </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Factura Asociada"/>
-                            </f:facet>
-                            <h:outputText value="#{item.facturaid}"/>
-                        </p:column>
+                        
                         <f:facet name="footer">
-                            <p:commandButton id="createButton" icon="ui-icon-plus"   value="Crear" actionListener="#{ordenventaController.prepareCreate}" update=":OrdenventaCreateForm" oncomplete="PF('OrdenventaCreateDialog').show()"/>
-                            <p:commandButton id="viewButton"   icon="ui-icon-search" value="Ver" update=":OrdenventaViewForm" oncomplete="PF('OrdenventaViewDialog').show()" disabled="#{empty ordenventaController.selected}"/>
-                            <p:commandButton id="editButton"   icon="ui-icon-pencil" value="Editar" update=":OrdenventaEditForm" oncomplete="PF('OrdenventaEditDialog').show()" disabled="#{empty ordenventaController.selected}"/>
-                            <p:commandButton id="deleteButton" icon="ui-icon-trash"  value="Eliminar" actionListener="#{ordenventaController.destroy}" update=":growl,datalist" disabled="#{empty ordenventaController.selected}"/>
                             
                              <p:commandButton  class="btn btn-success btn-sm" icon=" fa-bar-chart" value ="Grficar" ajax="true " id="graficar" oncomplete="PF('dlgChart').show()" actionListener="#{ordenventaBean.graficar()}" update="hpgGrafico"/>
                         </f:facet>
